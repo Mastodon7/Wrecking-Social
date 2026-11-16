@@ -341,8 +341,9 @@ export default function PrivacyPage() {
       <h2>8. Security</h2>
       <p>
         We protect information with measures such as encrypted HTTPS
-        connections, hashed passwords, restricted access to our servers and
-        databases, and keeping access tokens out of the browser. No method of
+        connections, hashed passwords, encryption of the access tokens of
+        your connected channels in our database, restricted access to our
+        servers and databases, and keeping access tokens out of the browser. No method of
         storage or transmission is completely secure, so we cannot guarantee
         absolute security. If a breach affects your information, we will tell
         you as the law requires.
