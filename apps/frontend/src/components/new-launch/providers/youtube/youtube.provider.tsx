@@ -116,6 +116,29 @@ const YoutubeSettings: FC = () => {
           {...register('made_with_ai')}
         />
       </div>
+      <div className="mt-[18px] text-[14px] text-balance">
+        {t(
+          'youtube_upload_agreement',
+          'By uploading, you confirm this video follows the YouTube Community Guidelines and you agree to the'
+        )}{' '}
+        <a
+          target="_blank"
+          rel="noreferrer"
+          className="text-[#B69DEC] hover:underline"
+          href="https://www.youtube.com/t/terms"
+        >
+          {t('youtube_terms_of_service', 'YouTube Terms of Service')}
+        </a>
+        .{' '}
+        <a
+          target="_blank"
+          rel="noreferrer"
+          className="text-[#B69DEC] hover:underline"
+          href="https://www.youtube.com/howyoutubeworks/policies/community-guidelines/"
+        >
+          {t('youtube_community_guidelines', 'Community Guidelines')}
+        </a>
+      </div>
       {!!thumbnail?.path && (
         <div className="mt-[20px] flex items-center gap-[10px] text-[12px]">
           <div className="flex-1">

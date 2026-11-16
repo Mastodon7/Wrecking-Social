@@ -10,6 +10,8 @@ import {
 } from '@gitroom/react/translation/i18n.config';
 acceptLanguage.languages(languages);
 
+const websitePaths = ['/', '/privacy', '/terms', '/data-deletion', '/contact'];
+
 // This function can be marked `async` if using `await` inside
 export async function proxy(request: NextRequest) {
   const nextUrl = request.nextUrl;
@@ -51,6 +53,19 @@ export async function proxy(request: NextRequest) {
     // the consent screen of MCP / OAuth clients handles signed-out visitors
     // itself (sign in and come back, or connect a self-hosted instance)
     nextUrl.pathname.startsWith('/oauth/authorize')
+  ) {
+    return topResponse;
+  }
+
+  // the public website (homepage, legal pages, contact) is open to everyone,
+  // signed-in people and team invites (/?org= or the org cookie it sets)
+  // opening the homepage still go through the app below
+  if (
+    websitePaths.includes(nextUrl.pathname) &&
+    (nextUrl.pathname !== '/' ||
+      (!authCookie &&
+        !nextUrl.searchParams.get('org') &&
+        !request.cookies.has('org')))
   ) {
     return topResponse;
   }

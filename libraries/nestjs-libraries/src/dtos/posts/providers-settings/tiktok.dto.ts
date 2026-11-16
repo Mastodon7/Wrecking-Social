@@ -67,7 +67,9 @@ export class TikTokLocation {
 // music / location are TikTok Business only: the legacy TikTok provider ignores
 // them (its Content Posting API has no music_sound_info / location fields).
 // Fields stay required here (existing clients depend on it); the constraints are
-// documented, not enforced.
+// documented, not enforced. The exception is privacy_level, which TikTok's
+// content sharing guidelines say the user must pick for every direct post, so
+// it has no default and is only required when it is not an UPLOAD.
 export class TikTokDto {
   @ValidateIf((p) => p.title)
   @MaxLength(90)
@@ -77,12 +79,16 @@ export class TikTokDto {
   })
   title: string;
 
-  @IsIn([
-    'PUBLIC_TO_EVERYONE',
-    'MUTUAL_FOLLOW_FRIENDS',
-    'FOLLOWER_OF_CREATOR',
-    'SELF_ONLY',
-  ])
+  @ValidateIf((p) => p.content_posting_method !== 'UPLOAD')
+  @IsIn(
+    [
+      'PUBLIC_TO_EVERYONE',
+      'MUTUAL_FOLLOW_FRIENDS',
+      'FOLLOWER_OF_CREATOR',
+      'SELF_ONLY',
+    ],
+    { message: 'Please choose who can see this post' }
+  )
   @IsString()
   @JSONSchema({
     description:
