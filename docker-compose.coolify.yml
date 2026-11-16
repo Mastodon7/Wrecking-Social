@@ -86,7 +86,7 @@ services:
       redis:
         condition: service_healthy
       temporal:
-        condition: service_started
+        condition: service_healthy
 
   postgres:
     image: postgres:17-alpine
@@ -162,6 +162,18 @@ services:
       - ES_SEEDS=temporal-elasticsearch
       - ES_VERSION=v7
       - TEMPORAL_NAMESPACE=default
+    # The app gives up at start if Temporal is not ready, so it waits until
+    # the default namespace exists
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'temporal operator namespace describe -n default --address $$(hostname -i):7233',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
     volumes:
       # Coolify creates this file from "content" (same settings as
       # dynamicconfig/development-sql.yaml in this repo)
