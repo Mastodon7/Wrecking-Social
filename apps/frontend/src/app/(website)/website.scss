@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ws-ink: #101b14;
+  --ws-ink-soft: #16251b;
+  --ws-green: #37f473;
+  --ws-green-deep: #086b31;
+  --ws-light: #e7ffd9;
+  --ws-paper: #f8f9f1;
+  --ws-muted: #a9b8aa;
+  --ws-line: #2a3b2e;
+  --ws-bronze: #c99a5f;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--ws-ink);
+  color: var(--ws-paper);
+  font-family: var(--font-ws-body), system-ui, sans-serif;
+}
+
+.ws-display {
+  font-family: var(--font-ws-display), var(--font-ws-body), sans-serif;
+}
+
+.ws-legal h2 {
+  font-family: var(--font-ws-display), var(--font-ws-body), sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  margin-top: 40px;
+  margin-bottom: 12px;
+  color: #fff;
+}
+
+.ws-legal h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 24px;
+  margin-bottom: 8px;
+  color: #fff;
+}
+
+.ws-legal p,
+.ws-legal li {
+  line-height: 1.7;
+  color: #d6e0d6;
+}
+
+.ws-legal p {
+  margin-bottom: 12px;
+}
+
+.ws-legal ul {
+  list-style: disc;
+  padding-inline-start: 24px;
+  margin-bottom: 12px;
+}
+
+.ws-legal ol {
+  list-style: decimal;
+  padding-inline-start: 24px;
+  margin-bottom: 12px;
+}
+
+.ws-legal a {
+  color: var(--ws-green);
+  text-decoration: underline;
+}
+
+.ws-legal table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 16px;
+  font-size: 15px;
+}
+
+.ws-legal th,
+.ws-legal td {
+  border: 1px solid var(--ws-line);
+  padding: 10px 12px;
+  text-align: start;
+  vertical-align: top;
+  color: #d6e0d6;
+}
+
+.ws-legal th {
+  background: var(--ws-ink-soft);
+  color: #fff;
+}

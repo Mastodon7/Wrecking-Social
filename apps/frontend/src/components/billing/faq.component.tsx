@@ -2,12 +2,10 @@
 
 import { FC, ReactNode, useCallback, useState } from 'react';
 import clsx from 'clsx';
-import { useVariables } from '@gitroom/react/helpers/variable.context';
 import { useUser } from '@gitroom/frontend/components/layout/user.context';
 import { useT } from '@gitroom/react/translation/get.transation.service.client';
 import DeleteAccountComponent from '@gitroom/frontend/components/settings/delete-account.component';
 const useFaqList = () => {
-  const { isGeneral } = useVariables();
   const user = useUser();
   const t = useT();
   return [
@@ -16,36 +14,27 @@ const useFaqList = () => {
           {
             title: t(
               'faq_am_i_going_to_be_charged_by_postiz',
-              'Am I going to be charged by Postiz?'
+              'Am I going to be charged by Wrecking Social?'
             ),
             description: t(
               'faq_to_confirm_credit_card_information_postiz_will_hold',
-              'To confirm credit card information Postiz will hold $2 and release it immediately, you can cancel your subscription anytime from settings without talking to a person'
+              'To confirm credit card information Wrecking Social will hold $2 and release it immediately, you can cancel your subscription anytime from settings without talking to a person'
             ),
           },
         ]
       : []),
     {
-      title: t(
-        'faq_can_i_trust_postiz_gitroom',
-        `Can I trust ${isGeneral ? 'Postiz' : 'Gitroom'}?`
-      ),
+      title: t('ws_faq_open_source_title', 'What is Wrecking Social built on?'),
       description: t(
-        'faq_postiz_gitroom_is_proudly_open_source',
-        `${
-          isGeneral ? 'Postiz' : 'Gitroom'
-        } is proudly open-source! We believe in an ethical and transparent culture, meaning that ${
-          isGeneral ? 'Postiz' : 'Gitroom'
-        } will live forever. You can check out the entire code or use it for personal projects. To view the open-source repository, <a href="https://github.com/gitroomhq/postiz-app" target="_blank" style="text-decoration: underline;">click here</a>.`
+        'ws_faq_open_source_description',
+        'Wrecking Social is built on Postiz, an open-source social media scheduler released under the GNU AGPL-3.0 license. To get the source code of the version we run, email <a href="mailto:orders@wreckingsocial.com" style="text-decoration: underline;">orders@wreckingsocial.com</a>.'
       ),
     },
     {
       title: t('faq_what_are_channels', 'What are channels?'),
       description: t(
         'faq_postiz_gitroom_allows_you_to_schedule_posts',
-        `${
-          isGeneral ? 'Postiz' : 'Gitroom'
-        } allows you to schedule your posts between different channels.
+        `Wrecking Social allows you to schedule your posts between different channels.
 A channel is a publishing platform where you can schedule your posts.
 For example, you can schedule your posts on X, Facebook, Instagram, TikTok, YouTube, Reddit, Linkedin, Dribbble, Threads and Pinterest.`
       ),
@@ -66,9 +55,7 @@ For example, you can schedule your posts on X, Facebook, Instagram, TikTok, YouT
             ),
             description: t(
               'faq_delete_account_description',
-              `If you don't want to continue using ${
-                isGeneral ? 'Postiz' : 'Gitroom'
-              }, you can delete your account, including all your organizations, channels and posts. This action cannot be undone.`
+              `If you don't want to continue using Wrecking Social, you can delete your account, including all your organizations, channels and posts. This action cannot be undone.`
             ),
             content: <DeleteAccountComponent isLink={true} />,
           },

@@ -1,0 +1,197 @@
+# Wrecking Social on Coolify (Docker Compose build pack).
+#
+# Unlike docker-compose.yaml, which pulls the stock Postiz image, this builds
+# the app from this repository, so our rebrand and website are included.
+# Setup steps are in DEPLOY.md.
+#
+# Coolify fills ${SERVICE_PASSWORD_*} and ${SERVICE_BASE64_*} with generated
+# secrets on first deploy. Variables like ${APP_URL} show up as editable
+# environment variables in the Coolify UI.
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    restart: always
+    environment:
+      # Public address, for example https://app.wreckingsocial.com (no trailing slash)
+      MAIN_URL: ${APP_URL:?}
+      FRONTEND_URL: ${APP_URL}
+      NEXT_PUBLIC_BACKEND_URL: ${APP_URL}/api
+      BACKEND_INTERNAL_URL: http://localhost:3000
+      JWT_SECRET: ${SERVICE_BASE64_64_JWT}
+      DATABASE_URL: postgresql://wrecking:${SERVICE_PASSWORD_POSTGRES}@postgres:5432/wrecking-social
+      REDIS_URL: redis://redis:6379
+      TEMPORAL_ADDRESS: temporal:7233
+      IS_GENERAL: 'true'
+      DISABLE_REGISTRATION: ${DISABLE_REGISTRATION:-false}
+      STORAGE_PROVIDER: local
+      UPLOAD_DIRECTORY: /uploads
+      NEXT_PUBLIC_UPLOAD_DIRECTORY: /uploads
+      API_LIMIT: 30
+
+      # Encrypts the social media access tokens stored in the database.
+      # Generate once with: openssl rand -base64 32
+      # Keep a copy somewhere safe: without it every channel must reconnect.
+      ENCRYPTION_PROVIDER: local
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:?}
+      NX_ADD_PLUGINS: 'false'
+
+      # Email (sign-up activation, password reset, notifications)
+      EMAIL_PROVIDER: ${EMAIL_PROVIDER:-}
+      EMAIL_FROM_NAME: ${EMAIL_FROM_NAME:-Wrecking Social}
+      EMAIL_FROM_ADDRESS: ${EMAIL_FROM_ADDRESS:-}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      EMAIL_HOST: ${EMAIL_HOST:-}
+      EMAIL_PORT: ${EMAIL_PORT:-}
+      EMAIL_SECURE: ${EMAIL_SECURE:-}
+      EMAIL_USER: ${EMAIL_USER:-}
+      EMAIL_PASS: ${EMAIL_PASS:-}
+
+      # Social platform apps, filled in as each one is approved
+      FACEBOOK_APP_ID: ${FACEBOOK_APP_ID:-}
+      FACEBOOK_APP_SECRET: ${FACEBOOK_APP_SECRET:-}
+      THREADS_APP_ID: ${THREADS_APP_ID:-}
+      THREADS_APP_SECRET: ${THREADS_APP_SECRET:-}
+      YOUTUBE_CLIENT_ID: ${YOUTUBE_CLIENT_ID:-}
+      YOUTUBE_CLIENT_SECRET: ${YOUTUBE_CLIENT_SECRET:-}
+      LINKEDIN_CLIENT_ID: ${LINKEDIN_CLIENT_ID:-}
+      LINKEDIN_CLIENT_SECRET: ${LINKEDIN_CLIENT_SECRET:-}
+      TIKTOK_CLIENT_ID: ${TIKTOK_CLIENT_ID:-}
+      TIKTOK_CLIENT_SECRET: ${TIKTOK_CLIENT_SECRET:-}
+      PINTEREST_CLIENT_ID: ${PINTEREST_CLIENT_ID:-}
+      PINTEREST_CLIENT_SECRET: ${PINTEREST_CLIENT_SECRET:-}
+      X_API_KEY: ${X_API_KEY:-}
+      X_API_SECRET: ${X_API_SECRET:-}
+      REDDIT_CLIENT_ID: ${REDDIT_CLIENT_ID:-}
+      REDDIT_CLIENT_SECRET: ${REDDIT_CLIENT_SECRET:-}
+
+      # AI writing help (optional)
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+
+      # Billing (optional, leave empty until plans are ready)
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY:-}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_SIGNING_KEY: ${STRIPE_SIGNING_KEY:-}
+      FEE_AMOUNT: 0.05
+    volumes:
+      - wrecking-uploads:/uploads
+      - wrecking-config:/config
+    expose:
+      - 5000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      temporal:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:17-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: wrecking
+      POSTGRES_PASSWORD: ${SERVICE_PASSWORD_POSTGRES}
+      POSTGRES_DB: wrecking-social
+    volumes:
+      - wrecking-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U wrecking -d wrecking-social']
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  redis:
+    image: redis:7.2
+    restart: always
+    volumes:
+      - wrecking-redis:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # Temporal runs the scheduled publishing jobs
+  temporal-elasticsearch:
+    image: elasticsearch:7.17.27
+    restart: always
+    environment:
+      - cluster.routing.allocation.disk.threshold_enabled=true
+      - cluster.routing.allocation.disk.watermark.low=512mb
+      - cluster.routing.allocation.disk.watermark.high=256mb
+      - cluster.routing.allocation.disk.watermark.flood_stage=128mb
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms256m -Xmx256m
+      - xpack.security.enabled=false
+    volumes:
+      - temporal-elasticsearch:/usr/share/elasticsearch/data
+
+  temporal-postgresql:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: temporal
+      POSTGRES_PASSWORD: ${SERVICE_PASSWORD_TEMPORAL}
+    volumes:
+      - temporal-postgresql:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U temporal']
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  temporal:
+    image: temporalio/auto-setup:1.28.1
+    restart: always
+    depends_on:
+      temporal-postgresql:
+        condition: service_healthy
+      temporal-elasticsearch:
+        condition: service_started
+    environment:
+      - DB=postgres12
+      - DB_PORT=5432
+      - POSTGRES_USER=temporal
+      - POSTGRES_PWD=${SERVICE_PASSWORD_TEMPORAL}
+      - POSTGRES_SEEDS=temporal-postgresql
+      - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/wrecking-social.yaml
+      - ENABLE_ES=true
+      - ES_SEEDS=temporal-elasticsearch
+      - ES_VERSION=v7
+      - TEMPORAL_NAMESPACE=default
+    # The app gives up at start if Temporal is not ready, so it waits until
+    # the default namespace exists
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'temporal operator namespace describe -n default --address $$(hostname -i):7233',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    volumes:
+      # Coolify creates this file from "content" (same settings as
+      # dynamicconfig/development-sql.yaml in this repo)
+      - type: bind
+        source: ./temporal/wrecking-social.yaml
+        target: /etc/temporal/config/dynamicconfig/wrecking-social.yaml
+        content: |
+          limit.maxIDLength:
+            - value: 255
+              constraints: {}
+          system.forceSearchAttributesCacheRefreshOnRead:
+            - value: true
+              constraints: {}
+
+volumes:
+  wrecking-uploads:
+  wrecking-config:
+  wrecking-postgres:
+  wrecking-redis:
+  temporal-elasticsearch:
+  temporal-postgresql:

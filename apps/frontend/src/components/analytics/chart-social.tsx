@@ -40,8 +40,8 @@ export const ChartSocial: FC<{
 
   const colorSchemes = {
     purple: {
-      start: 'rgba(97, 43, 211, 0.8)',
-      end: 'rgba(97, 43, 211, 0.1)',
+      start: 'rgba(8, 107, 49, 0.8)',
+      end: 'rgba(8, 107, 49, 0.1)',
       border: 'rgb(97, 43, 211)',
     },
     green: {

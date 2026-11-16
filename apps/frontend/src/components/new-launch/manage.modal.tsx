@@ -306,7 +306,7 @@ export const ManageModal: FC<AddEditModalProps> = (props) => {
                     <div className="mt-[10px] text-[14px]">
                       {t(
                         'delete_published_post_note',
-                        'A published post is removed from Postiz only and stays live where it was published.'
+                        'A published post is removed from Wrecking Social only and stays live where it was published.'
                       )}
                     </div>
                   )}
@@ -367,7 +367,7 @@ export const ManageModal: FC<AddEditModalProps> = (props) => {
           (existingData.posts?.[0]?.state === 'PUBLISHED'
             ? ` ${t(
                 'delete_this_published_post_note',
-                'It is removed from Postiz only and stays live where it was published.'
+                'It is removed from Wrecking Social only and stays live where it was published.'
               )}`
             : ''),
         t('yes_delete_it', 'Yes, delete it!')
@@ -1042,7 +1042,7 @@ export const ManageModal: FC<AddEditModalProps> = (props) => {
       onClick={() => setMobileTab(mobileTab === 'preview' ? 'edit' : 'preview')}
       className={clsx(
         'hidden mobile:flex shrink-0 w-[32px] h-[44px] justify-end items-center cursor-pointer',
-        mobileTab === 'preview' ? 'text-[#FC69FF]' : 'text-[#A3A3A3]'
+        mobileTab === 'preview' ? 'text-[#37f473]' : 'text-[#A3A3A3]'
       )}
     >
       <EyeIcon />
@@ -1193,7 +1193,7 @@ export const ManageModal: FC<AddEditModalProps> = (props) => {
                     <div
                       onClick={() => setShowSettings(!showSettings)}
                       className={clsx(
-                        'bg-[#612BD3] rounded-[12px] flex items-center gap-[8px] cursor-pointer p-[12px] mobile:hidden',
+                        'bg-[#086b31] rounded-[12px] flex items-center gap-[8px] cursor-pointer p-[12px] mobile:hidden',
                         showSettings ? '!rounded-b-none' : ''
                       )}
                     >
@@ -1308,7 +1308,7 @@ export const ManageModal: FC<AddEditModalProps> = (props) => {
             )}
             {addEditSets && (
               <button
-                className="text-white text-[15px] font-[600] min-w-[180px] btnSub disabled:cursor-not-allowed disabled:opacity-80 outline-none gap-[8px] flex justify-center items-center h-[44px] rounded-[8px] bg-[#612BD3] ps-[20px] pe-[16px]"
+                className="text-white text-[15px] font-[600] min-w-[180px] btnSub disabled:cursor-not-allowed disabled:opacity-80 outline-none gap-[8px] flex justify-center items-center h-[44px] rounded-[8px] bg-[#086b31] ps-[20px] pe-[16px]"
                 disabled={
                   selectedIntegrations.length === 0 || loading || locked
                 }
@@ -1324,7 +1324,7 @@ export const ManageModal: FC<AddEditModalProps> = (props) => {
                     selectedIntegrations.length === 0 || loading || locked
                   }
                   onClick={schedule('schedule')}
-                  className="text-white relative min-w-[180px] btnSub disabled:cursor-not-allowed disabled:opacity-80 outline-none gap-[8px] flex justify-center items-center h-[44px] rounded-[8px] bg-[#612BD3] ps-[20px] pe-[16px]"
+                  className="text-white relative min-w-[180px] btnSub disabled:cursor-not-allowed disabled:opacity-80 outline-none gap-[8px] flex justify-center items-center h-[44px] rounded-[8px] bg-[#086b31] ps-[20px] pe-[16px]"
                 >
                   {loading && (
                     <div className="absolute left-[50%] top-[50%] -translate-y-[50%] -translate-x-[50%]">
@@ -1370,7 +1370,7 @@ export const ManageModal: FC<AddEditModalProps> = (props) => {
                       showPostNow ? 'flex' : 'hidden group-hover:flex'
                     )}
                   >
-                    <div className="text-white rounded-[8px] bg-[#D82D7E] h-[44px] w-full flex justify-center items-center post-now">
+                    <div className="text-white rounded-[8px] bg-[#a97a45] h-[44px] w-full flex justify-center items-center post-now">
                       {t('post_now', 'Post Now')}
                     </div>
                   </button>

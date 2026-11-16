@@ -870,7 +870,24 @@ export class IntegrationRepository {
     });
   }
 
-  deleteChannel(org: string, id: string) {
+  async deleteChannel(org: string, id: string) {
+    const hash = (value: string) =>
+      createHash('md5').update(value).digest('hex');
+
+    const integration = await this._integration.model.integration.findFirst({
+      where: {
+        id,
+        organizationId: org,
+      },
+      select: {
+        token: true,
+      },
+    });
+
+    // Destroy the credentials of a deleted channel. Connecting the same
+    // account again revives this row through createOrUpdateIntegration with
+    // a new token, and it keeps the stored refresh token when the platform
+    // sends none, so the refresh token is cleared instead of hashed
     return this._integration.model.integration.update({
       select: {
         id: true,
@@ -881,6 +898,12 @@ export class IntegrationRepository {
       },
       data: {
         deletedAt: new Date(),
+        ...(integration
+          ? {
+              token: hash(integration.token),
+              refreshToken: null,
+            }
+          : {}),
       },
     });
   }

@@ -17,7 +17,7 @@ export interface MobileTopBarAction {
 
 const actionColors = {
   primary: 'bg-btnPrimary text-white',
-  secondary: 'bg-[#D82D7E] text-white',
+  secondary: 'bg-[#a97a45] text-white',
   tertiary: 'bg-btnSimple text-btnText',
 };
 
