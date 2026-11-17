@@ -96,7 +96,25 @@ empty until each platform approves the app. Add them later and redeploy.
 Wait for the **Docker image** workflow on GitHub to finish (about 15 to 25
 minutes the first time), then click **Deploy** in Coolify. The deploy only
 pulls the image and starts the containers. Follow it in **Deployments → logs**.
-Later pushes to `main` build a new image; click **Redeploy** once it's done. When the app container says it's listening, open
+Later pushes to `main` build a new image, and the workflow then asks Coolify to
+redeploy (see "Automatic deploys" below).
+
+### Automatic deploys
+
+Coolify's own **Deploy on push** must stay off for this app (**Advanced →
+Auto deploy → Manual deployments only**): it fires the moment you push, before
+GitHub has built the new image, so it just restarts the old one. Instead the
+**Docker image** workflow calls Coolify's deploy webhook after the image is
+pushed. It needs one secret:
+
+1. Coolify → **Keys & Tokens → API tokens → New Token**. Name it
+   `github-wrecking-social-deploy` and give it only the **deploy** permission.
+   Copy the token (Coolify shows it once).
+2. GitHub → the repo → **Settings → Secrets and variables → Actions → New
+   repository secret**. Name `COOLIFY_TOKEN`, paste the token, **Add secret**.
+
+Without the secret the workflow still builds the image and shows a warning;
+click **Redeploy** in Coolify by hand. When the app container says it's listening, open
 https://app.wreckingsocial.com.
 
 ## 7. Check it
