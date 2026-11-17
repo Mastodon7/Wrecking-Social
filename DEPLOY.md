@@ -8,9 +8,12 @@ posts (Temporal, its own Postgres and Elasticsearch).
 Start on a test address (`app.wreckingsocial.com`), check it works, then move it
 to `wreckingsocial.com` (step 8).
 
-**Server size:** building the app needs about 4 GB of free memory, and running
-everything needs about 3 GB. If the build fails with "out of memory", the server
-needs more RAM or a swap file.
+**Where the app is built:** not on the server. Building the app needs about
+4 GB of memory, and doing that on the production VPS froze every app on it.
+GitHub Actions builds the image on each push to `main`
+(`.github/workflows/docker-image.yml`) and pushes it to
+`ghcr.io/mastodon7/wrecking-social`. Coolify only pulls and runs it. Running
+everything needs about 3 GB.
 
 ## 1. Let Coolify read the repo
 
@@ -20,6 +23,22 @@ apps deploy.
 1. Go to **github.com/settings/installations**.
 2. Next to the Coolify app, click **Configure**.
 3. Add `Wrecking-Social` under **Repository access**, then **Save**.
+
+## 1b. Let the server pull the image
+
+The image is private, so the server needs a GitHub token that can only read
+packages.
+
+1. GitHub → **Settings → Developer settings → Personal access tokens →
+   Tokens (classic)** → **Generate new token (classic)**. Name it
+   `coolify-ghcr-read`, tick only **read:packages**, and generate it.
+2. Log the server in to ghcr.io with your GitHub username and that token, for
+   example in Coolify → **Servers → localhost → Terminal**:
+   `docker login ghcr.io -u <github-username>` and paste the token when asked.
+   (On Coolify versions with **Servers → localhost → Registries**, add
+   `ghcr.io` there instead.)
+3. Check the **Docker image** workflow has run on `main` (GitHub → **Actions**)
+   before the first deploy, or the pull fails.
 
 ## 2. Point the test address at the server
 
@@ -74,8 +93,10 @@ empty until each platform approves the app. Add them later and redeploy.
 
 ## 6. Deploy
 
-Click **Deploy**. The first build takes 10 to 20 minutes. Follow it in
-**Deployments → logs**. When the app container says it's listening, open
+Wait for the **Docker image** workflow on GitHub to finish (about 15 to 25
+minutes the first time), then click **Deploy** in Coolify. The deploy only
+pulls the image and starts the containers. Follow it in **Deployments → logs**.
+Later pushes to `main` build a new image; click **Redeploy** once it's done. When the app container says it's listening, open
 https://app.wreckingsocial.com.
 
 ## 7. Check it

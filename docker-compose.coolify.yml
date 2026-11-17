@@ -1,8 +1,10 @@
 # Wrecking Social on Coolify (Docker Compose build pack).
 #
-# Unlike docker-compose.yaml, which pulls the stock Postiz image, this builds
-# the app from this repository, so our rebrand and website are included.
-# Setup steps are in DEPLOY.md.
+# Unlike docker-compose.yaml, which pulls the stock Postiz image, this runs our
+# own image, so our rebrand and website are included. GitHub Actions builds it
+# from this repository on every push to main (.github/workflows/docker-image.yml)
+# and pushes it to ghcr.io. The server only pulls it: building it there needs
+# about 4 GB of memory and froze the production VPS. Setup steps are in DEPLOY.md.
 #
 # Coolify fills ${SERVICE_PASSWORD_*} and ${SERVICE_BASE64_*} with generated
 # secrets on first deploy. Variables like ${APP_URL} show up as editable
@@ -10,9 +12,8 @@
 
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
+    image: ghcr.io/mastodon7/wrecking-social:latest
+    pull_policy: always
     restart: always
     environment:
       # Public address, for example https://app.wreckingsocial.com (no trailing slash)
