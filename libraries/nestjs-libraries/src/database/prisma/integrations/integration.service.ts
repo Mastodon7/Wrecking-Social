@@ -28,7 +28,7 @@ import utc from 'dayjs/plugin/utc';
 import { AutopostRepository } from '@gitroom/nestjs-libraries/database/prisma/autopost/autopost.repository';
 import { RefreshIntegrationService } from '@gitroom/nestjs-libraries/integrations/refresh.integration.service';
 import { TemporalService } from 'nestjs-temporal-core';
-import { randomBytes } from 'crypto';
+import { createHmac, randomBytes, timingSafeEqual } from 'crypto';
 import { ApplicationFailure } from '@temporalio/common';
 import {
   EncryptionService,
@@ -400,6 +400,69 @@ export class IntegrationService {
     }
 
     return this._integrationRepository.enableChannel(org, id);
+  }
+
+  // Meta apps that can send data deletion / deauthorize callbacks, with the
+  // secret their signed_request is signed with and the channels they own
+  metaCallbackApp(app: string) {
+    const apps: Record<string, { secret?: string; providers: string[] }> = {
+      facebook: {
+        secret: process.env.FACEBOOK_APP_SECRET,
+        providers: ['facebook', 'instagram'],
+      },
+      instagram: {
+        secret: process.env.INSTAGRAM_APP_SECRET,
+        providers: ['instagram-standalone'],
+      },
+      threads: {
+        secret: process.env.THREADS_APP_SECRET,
+        providers: ['threads'],
+      },
+    };
+
+    return apps[app];
+  }
+
+  // https://developers.facebook.com/docs/development/create-an-app/app-dashboard/data-deletion-callback
+  // signed_request is <base64url HMAC-SHA256 of the payload>.<base64url JSON>,
+  // signed with the app secret. Returns the Meta user id, or null when the
+  // request is not from that app.
+  metaUserFromSignedRequest(secret: string, signedRequest: string) {
+    const [signature, payload] = (signedRequest || '').split('.');
+    if (!signature || !payload) {
+      return null;
+    }
+
+    const expected = createHmac('sha256', secret).update(payload).digest();
+    const received = Buffer.from(signature, 'base64url');
+    if (
+      received.length !== expected.length ||
+      !timingSafeEqual(received, expected)
+    ) {
+      return null;
+    }
+
+    try {
+      const data = JSON.parse(
+        Buffer.from(payload, 'base64url').toString('utf8')
+      );
+      if (
+        String(data?.algorithm || '').toUpperCase() !== 'HMAC-SHA256' ||
+        !data?.user_id
+      ) {
+        return null;
+      }
+      return String(data.user_id);
+    } catch (err) {
+      return null;
+    }
+  }
+
+  getActiveChannelsOfPlatformUser(providers: string[], platformUserId: string) {
+    return this._integrationRepository.getActiveChannelsOfPlatformUser(
+      providers,
+      platformUserId
+    );
   }
 
   async getPostsForChannel(org: string, id: string) {

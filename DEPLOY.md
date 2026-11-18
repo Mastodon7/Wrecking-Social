@@ -149,6 +149,14 @@ platform application. Then use these URLs in every developer console:
 | Terms of Service | `https://wreckingsocial.com/terms` |
 | Data deletion instructions | `https://wreckingsocial.com/data-deletion` |
 | OAuth redirect (per platform) | `https://wreckingsocial.com/integrations/social/<platform>` |
+| Meta data deletion callback (Facebook app) | `https://wreckingsocial.com/api/meta/facebook/data-deletion` |
+| Meta deauthorize callback (Facebook app) | `https://wreckingsocial.com/api/meta/facebook/deauthorize` |
+| Instagram (Instagram Login app) | same, with `instagram` in place of `facebook` |
+| Threads uninstall / delete callbacks | same, with `threads` in place of `facebook` |
+
+The Meta callbacks check Meta's signature with that app's secret
+(`FACEBOOK_APP_SECRET`, `INSTAGRAM_APP_SECRET`, `THREADS_APP_SECRET`), so set
+the secret in Coolify before entering the callback URL in the Meta dashboard.
 
 ## Backups
 

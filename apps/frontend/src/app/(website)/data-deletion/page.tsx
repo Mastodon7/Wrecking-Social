@@ -13,9 +13,30 @@ export const metadata: Metadata = {
   alternates: { canonical: '/data-deletion' },
 };
 
-export default function DataDeletionPage() {
+export default async function DataDeletionPage(props: {
+  searchParams: Promise<{ code?: string }>;
+}) {
+  // Meta sends people here with the confirmation code of a deletion request
+  // made from their Facebook, Instagram or Threads settings
+  const { code } = await props.searchParams;
+  const confirmationCode = /^[a-f0-9]{16}$/.test(code || '') ? code : '';
+
   return (
     <LegalPage title="Data Deletion Instructions" updated={LEGAL_EFFECTIVE_DATE}>
+      {!!confirmationCode && (
+        <div className="rounded-[14px] border border-ws-green/40 bg-ws-inkSoft p-[20px] mb-[24px]">
+          <h2 className="!mt-0">Your deletion request is complete</h2>
+          <p>
+            Confirmation code: <strong>{confirmationCode}</strong>
+          </p>
+          <p className="!mb-0">
+            We received this request from Meta. Wrecking Social&apos;s access to
+            the account was removed, its scheduled posts were cancelled and its
+            access tokens were destroyed. To have every remaining record about
+            you erased, email us with this code as described in Option 3 below.
+          </p>
+        </div>
+      )}
       <p>
         You can remove a connected social media account, delete your whole
         Wrecking Social account, or ask us to delete your data at any time.
@@ -77,7 +98,8 @@ export default function DataDeletionPage() {
           <strong>Facebook and Instagram:</strong> on Facebook, go to{' '}
           <em>Settings &amp; privacy &gt; Settings &gt; Business
           integrations</em> (or <em>Apps and websites</em>), find Wrecking
-          Social and click <em>Remove</em>.
+          Social and click <em>Remove</em>. Meta then tells us, and we
+          disconnect the account and destroy its access tokens automatically.
         </li>
         <li>
           <strong>Google and YouTube:</strong> open your{' '}
