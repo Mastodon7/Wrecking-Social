@@ -43,7 +43,7 @@ can do it. **Code** = still needs building before that platform's review.
 | Link to the YouTube Terms of Service on the upload screen, and a Community Guidelines confirmation | YouTube | Done: notice under the YouTube settings |
 | Visible privacy status (public, unlisted, private) | YouTube | Done (already there) |
 | Disconnecting a channel destroys its access token | Meta, Google, LinkedIn | Done: deleting a channel now destroys its tokens (before, they stayed in the database) |
-| Meta data-deletion callback and Threads deauthorize callback | Meta, Threads | Done: `/api/meta/<facebook\|instagram\|threads>/data-deletion` and `/deauthorize` (URLs in DEPLOY.md). They verify Meta's signature, disconnect the person's channels and return the status link `/data-deletion?code=…` |
+| Meta data-deletion callback and Threads deauthorize callback | Meta, Threads | Done: `/api/platform-callbacks/<facebook\|instagram-standalone\|threads>/data-deletion` and `/deauthorize` (URLs in DEPLOY.md). They verify Meta's signature, disconnect the person's channels and return the status link `/data-deletion?code=…` |
 | Every post is chosen by the user (no autopilot) | Pinterest, X | Done for normal posts. **Careful:** the RSS auto-post feature publishes on its own. Don't show it in Pinterest or X screencasts, and don't use it on those channels |
 
 ## Things only the business can do

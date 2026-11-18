@@ -1,3 +1,4 @@
+import { metaUserFromSignedRequest } from '@gitroom/nestjs-libraries/integrations/social/meta.signed.request';
 import {
   AnalyticsData,
   AuthTokenDetails,
@@ -26,6 +27,7 @@ import { Rules } from '@gitroom/nestjs-libraries/chat/rules.description.decorato
 )
 export class ThreadsProvider extends SocialAbstract implements SocialProvider {
   identifier = 'threads';
+
   name = 'Threads';
   isBetweenSteps = false;
   scopes = [
@@ -956,4 +958,12 @@ export class ThreadsProvider extends SocialAbstract implements SocialProvider {
   // mentionFormat(idOrHandle: string, name: string) {
   //   return `@${idOrHandle}`;
   // }
+
+  // Meta's deauthorize / data deletion callbacks of this app
+  platformUserFromCallback(body: Record<string, unknown>) {
+    return metaUserFromSignedRequest(
+      process.env.THREADS_APP_SECRET,
+      body?.signed_request
+    );
+  }
 }

@@ -1,3 +1,4 @@
+import { metaUserFromSignedRequest } from '@gitroom/nestjs-libraries/integrations/social/meta.signed.request';
 import {
   AuthTokenDetails,
   PostDetails,
@@ -29,6 +30,7 @@ export class InstagramStandaloneProvider
   implements SocialProvider
 {
   identifier = 'instagram-standalone';
+
   name = 'Instagram\n(Standalone)';
   isBetweenSteps = false;
   refreshCron = true;
@@ -302,6 +304,14 @@ export class InstagramStandaloneProvider
       postId,
       date,
       'graph.instagram.com'
+    );
+  }
+
+  // Meta's deauthorize / data deletion callbacks of this app
+  platformUserFromCallback(body: Record<string, unknown>) {
+    return metaUserFromSignedRequest(
+      process.env.INSTAGRAM_APP_SECRET,
+      body?.signed_request
     );
   }
 }

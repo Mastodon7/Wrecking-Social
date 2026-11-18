@@ -1,3 +1,4 @@
+import { metaUserFromSignedRequest } from '@gitroom/nestjs-libraries/integrations/social/meta.signed.request';
 import {
   AnalyticsData,
   AuthTokenDetails,
@@ -39,6 +40,10 @@ const AI_DISCLOSURE_TIMEOUT = 30_000;
 )
 export class FacebookProvider extends SocialAbstract implements SocialProvider {
   identifier = 'facebook';
+
+  // Instagram connected through Facebook login uses the same Meta app, so
+  // this app's deauthorize / data deletion callbacks remove it too
+  callbackProviders = ['facebook', 'instagram'];
   name = 'Facebook Page';
   isBetweenSteps = true;
   scopes = [
@@ -1319,5 +1324,13 @@ export class FacebookProvider extends SocialAbstract implements SocialProvider {
       console.error('Error fetching Facebook video post analytics:', err);
       return [];
     }
+  }
+
+  // Meta's deauthorize / data deletion callbacks of this app
+  platformUserFromCallback(body: Record<string, unknown>) {
+    return metaUserFromSignedRequest(
+      process.env.FACEBOOK_APP_SECRET,
+      body?.signed_request
+    );
   }
 }

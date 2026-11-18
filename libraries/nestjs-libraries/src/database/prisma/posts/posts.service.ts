@@ -78,6 +78,47 @@ export class PostsService {
     private _refreshIntegrationService: RefreshIntegrationService
   ) {}
 
+  // A platform's "app removed" / "delete my data" callback: disconnect every
+  // channel of that platform user the way deleting a channel in the app does
+  // (scheduled posts cancelled, tokens destroyed). Returns null when the
+  // provider has no such callback or the request is not genuine.
+  async disconnectPlatformUser(
+    providerIdentifier: string,
+    body: Record<string, unknown>
+  ) {
+    const provider =
+      this._integrationManager.getSocialIntegration(providerIdentifier);
+    const platformUserId = provider?.platformUserFromCallback?.(body || {});
+    if (!provider || !platformUserId) {
+      return null;
+    }
+
+    const channels =
+      await this._integrationService.getActiveChannelsOfPlatformUser(
+        provider.callbackProviders || [provider.identifier],
+        platformUserId
+      );
+
+    for (const channel of channels) {
+      const posts = await this._integrationService.getPostsForChannel(
+        channel.organizationId,
+        channel.id
+      );
+      for (const post of posts) {
+        this.deletePost(channel.organizationId, post.group).catch(() => {});
+      }
+      await this._integrationService.deleteChannel(
+        channel.organizationId,
+        channel.id
+      );
+    }
+
+    return {
+      platformUserId,
+      channelIds: channels.map((channel) => channel.id),
+    };
+  }
+
   searchForMissingThreeHoursPosts() {
     return this._postRepository.searchForMissingThreeHoursPosts();
   }
