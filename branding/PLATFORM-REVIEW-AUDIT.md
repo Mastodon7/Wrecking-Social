@@ -35,11 +35,11 @@ can do it. **Code** = still needs building before that platform's review.
 | Requirement | Platform | Status |
 |---|---|---|
 | Privacy level has no default, the user must choose | TikTok | Done (it defaulted to Public before) |
-| Allow Comment / Duet / Stitch unchecked by default | TikTok | Done (Comments was checked before) |
+| Allow Comment / Duet / Stitch unchecked by default, greyed out when the creator turned them off | TikTok | Done (Comments was checked before; Duet/Stitch are off for photos) |
 | "By posting, you agree to TikTok's Music Usage Confirmation" above Publish on every direct post | TikTok | Done (before, it only showed with a brand disclosure) |
-| Show the creator's TikTok nickname; use `creator_info` for privacy options, `can_post` and max video length | TikTok | **Code:** not built. The privacy list is hard-coded |
-| Commercial content labels "Promotional content" and "Paid partnership"; branded content cannot be private | TikTok | **Code:** labels differ, and the private rule is not enforced |
-| "Processing can take a few minutes" notice after posting | TikTok | **Code:** missing |
+| Show the creator's TikTok nickname; use `creator_info` for privacy options, posting status and max video length | TikTok | Done: loaded every time the post screen opens. When TikTok refuses new posts the screen says so (the post can still be scheduled) |
+| Commercial content labels "Promotional content" and "Paid partnership"; branded content cannot be private | TikTok | Done: TikTok's exact labels, at least one choice required when disclosure is on, "private" unavailable for branded content |
+| "Processing can take a few minutes" notice after posting | TikTok | Done: shown under the publish declaration |
 | Link to the YouTube Terms of Service on the upload screen, and a Community Guidelines confirmation | YouTube | Done: notice under the YouTube settings |
 | Visible privacy status (public, unlisted, private) | YouTube | Done (already there) |
 | Disconnecting a channel destroys its access token | Meta, Google, LinkedIn | Done: deleting a channel now destroys its tokens (before, they stayed in the database) |
@@ -64,4 +64,4 @@ can do it. **Code** = still needs building before that platform's review.
 - **X:** the Developer Agreement's "service bureau" clause may not allow one shared X app posting for every customer. Get legal advice, or have each customer bring their own X app.
 - **Reddit:** commercial schedulers need Reddit's approval and probably a paid contract.
 - **LinkedIn Community Management:** a rejection is final for that app, so have everything ready before you apply.
-- **TikTok:** the strictest UX audit. Finish the three TikTok **Code** items above before applying.
+- **TikTok:** the strictest UX audit. Record the screencast with a TikTok sandbox account and walk through every item above.

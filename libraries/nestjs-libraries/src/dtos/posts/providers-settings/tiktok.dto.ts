@@ -1,8 +1,77 @@
 import {
-  IsBoolean, ValidateIf, IsIn, IsString, MaxLength, IsOptional, IsDefined, IsNumber, Min, Max, ValidateNested
+  IsBoolean, ValidateIf, IsIn, IsString, MaxLength, IsOptional, IsDefined, IsNumber, Min, Max, ValidateNested,
+  registerDecorator, ValidationArguments, ValidationOptions, ValidatorConstraint, ValidatorConstraintInterface
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { JSONSchema } from 'class-validator-jsonschema';
+
+// TikTok's content sharing guidelines for the commercial content disclosure.
+// Both only apply to a direct post: UPLOAD discards these settings.
+const isTikTokDirectPost = (args: ValidationArguments) =>
+  (args.object as { content_posting_method?: string })
+    .content_posting_method !== 'UPLOAD';
+
+// "Branded content visibility cannot be set to private."
+@ValidatorConstraint({ name: 'IsTikTokBrandedNotPrivate', async: false })
+export class IsTikTokBrandedNotPrivateConstraint
+  implements ValidatorConstraintInterface
+{
+  validate(value: unknown, args: ValidationArguments): boolean {
+    const { privacy_level } = args.object as { privacy_level?: string };
+    return !(isTikTokDirectPost(args) && value === true && privacy_level === 'SELF_ONLY');
+  }
+
+  defaultMessage(_args: ValidationArguments): string {
+    return 'Branded content visibility cannot be set to private.';
+  }
+}
+
+export function IsTikTokBrandedNotPrivate(validationOptions?: ValidationOptions) {
+  return function (object: object, propertyName: string) {
+    registerDecorator({
+      target: object.constructor,
+      propertyName,
+      options: validationOptions,
+      validator: IsTikTokBrandedNotPrivateConstraint,
+    });
+  };
+}
+
+// With the disclosure switched on in the post screen (the "disclose" field,
+// sent by the dashboard only), at least one of "Your brand" / "Branded content"
+// has to be picked
+@ValidatorConstraint({ name: 'IsTikTokDisclosureChosen', async: false })
+export class IsTikTokDisclosureChosenConstraint
+  implements ValidatorConstraintInterface
+{
+  validate(value: unknown, args: ValidationArguments): boolean {
+    const { disclose, brand_content_toggle } = args.object as {
+      disclose?: boolean;
+      brand_content_toggle?: boolean;
+    };
+    return !(
+      isTikTokDirectPost(args) &&
+      disclose === true &&
+      value !== true &&
+      brand_content_toggle !== true
+    );
+  }
+
+  defaultMessage(_args: ValidationArguments): string {
+    return 'You need to indicate if your content promotes yourself, a third party, or both.';
+  }
+}
+
+export function IsTikTokDisclosureChosen(validationOptions?: ValidationOptions) {
+  return function (object: object, propertyName: string) {
+    registerDecorator({
+      target: object.constructor,
+      propertyName,
+      options: validationOptions,
+      validator: IsTikTokDisclosureChosenConstraint,
+    });
+  };
+}
 
 export class TikTokMusic {
   @IsDefined()
@@ -131,9 +200,10 @@ export class TikTokDto {
   autoAddMusic: 'yes' | 'no';
 
   @IsBoolean()
+  @IsTikTokBrandedNotPrivate()
   @JSONSchema({
     description:
-      'Applied only when content_posting_method=DIRECT_POST. Ignored by TikTok on UPLOAD.',
+      'Applied only when content_posting_method=DIRECT_POST. Ignored by TikTok on UPLOAD. Cannot be combined with privacy_level SELF_ONLY.',
   })
   brand_content_toggle: boolean;
 
@@ -146,6 +216,7 @@ export class TikTokDto {
   video_made_with_ai: boolean;
 
   @IsBoolean()
+  @IsTikTokDisclosureChosen()
   @JSONSchema({
     description:
       'Applied only when content_posting_method=DIRECT_POST. Ignored by TikTok on UPLOAD.',
