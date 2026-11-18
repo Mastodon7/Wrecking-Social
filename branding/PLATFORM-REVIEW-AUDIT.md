@@ -24,8 +24,8 @@ can do it. **Code** = still needs building before that platform's review.
 | Terms require following each platform's terms; the user chooses what is posted | X, Pinterest, TikTok | Done: terms sections 3 and 5 |
 | Data Deletion Instructions page (usable as Meta's "Data Deletion Instructions URL") | Meta | Done: `/data-deletion` |
 | Deletion requests completed within 7 days | YouTube III.D | Done in the policy text. **You** must actually do it, see below |
-| Contact page with business email and address | Meta, LinkedIn, YouTube | Done: `/contact`. **You:** a phone number is still missing |
-| Legal business name matches the business verification documents | Meta, LinkedIn | **You:** the site says "Wrecking Social, a 25M Company". Replace it with the exact registered legal name in `apps/frontend/src/components/website/website.company.ts` |
+| Contact page with business email, phone and address | Meta, LinkedIn, YouTube | Done: `/contact` and the footer of every page |
+| Legal business name matches the business verification documents | Meta, LinkedIn | Done: "25M Printing" on every page and in the policies. Use exactly this name in Meta Business Verification and the developer consoles |
 | No platform names or logos in the app name or icon | LinkedIn, TikTok, Meta | Done: the icon is the wrecking-ball speech bubble |
 | Crawlable, sitemap, robots | Meta, Google | Done: `/robots.txt`, `/sitemap.xml` |
 | No inflated claims or other companies' testimonials | All (misleading content) | Done: removed Postiz's "20,000+ users" claims and testimonials |
@@ -49,7 +49,7 @@ can do it. **Code** = still needs building before that platform's review.
 ## Things only the business can do
 
 1. **Deploy this version on wreckingsocial.com.** Set `FRONTEND_URL=https://wreckingsocial.com`. Reviewers check the live site, and today it still shows the old demo page.
-2. **Use the exact legal name and add a phone number** on the site (one file: `website.company.ts`). They must match your business verification documents.
+2. **Use the same business name everywhere:** "25M Printing" and (708) 398-3232, as on the site, in Meta Business Verification, LinkedIn and every developer console.
 3. **Have a lawyer review** `/privacy` and `/terms`. They are written to match what the app really does, but they are not legal advice.
 4. **Set up a business mailbox** such as privacy@ or support@wreckingsocial.com and use it for every developer account. Personal email fails LinkedIn.
 5. **Verify the domain**: Google Search Console, TikTok URL verification (the website, terms, privacy and media URLs), and Meta Business Manager.
