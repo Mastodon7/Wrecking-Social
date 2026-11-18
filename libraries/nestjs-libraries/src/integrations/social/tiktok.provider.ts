@@ -24,6 +24,7 @@ import { createReadStream } from 'fs';
 import { getSsrfSafeDispatcher } from '@gitroom/nestjs-libraries/dtos/webhooks/ssrf.safe.dispatcher';
 import { Integration } from '@prisma/client';
 import { Rules } from '@gitroom/nestjs-libraries/chat/rules.description.decorator';
+import { DashboardFunction } from '@gitroom/nestjs-libraries/integrations/dashboard.function.decorator';
 
 @Rules(
   [
@@ -437,6 +438,53 @@ export class TiktokProvider extends SocialAbstract implements SocialProvider {
 
     return {
       maxDurationSeconds: max_video_post_duration_sec,
+    };
+  }
+
+  // TikTok's content sharing guidelines: the post screen loads the creator's
+  // info every time it opens, shows whose account receives the post, offers
+  // only the privacy levels TikTok returns, greys out the interactions the
+  // creator turned off, and blocks posting while TikTok refuses new posts.
+  @DashboardFunction()
+  async creatorInfo(accessToken: string) {
+    const body = await (
+      await fetch(
+        'https://open.tiktokapis.com/v2/post/publish/creator_info/query/',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json; charset=UTF-8',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+    ).json();
+
+    // An expired token is refreshed by the caller, like the other providers
+    if (body?.error?.code === 'access_token_invalid') {
+      throw new RefreshToken(this.identifier, JSON.stringify(body), '{}');
+    }
+
+    // Any other code (for example spam_risk_too_many_posts or
+    // reached_active_user_cap) means TikTok refuses new posts for now
+    if (body?.error?.code && body.error.code !== 'ok') {
+      return {
+        canPost: false,
+        error: body.error.message || body.error.code,
+      };
+    }
+
+    const data = body?.data || {};
+    return {
+      canPost: true,
+      nickname: data.creator_nickname || '',
+      username: data.creator_username || '',
+      avatar: data.creator_avatar_url || '',
+      privacyLevelOptions: (data.privacy_level_options || []) as string[],
+      commentDisabled: !!data.comment_disabled,
+      duetDisabled: !!data.duet_disabled,
+      stitchDisabled: !!data.stitch_disabled,
+      maxVideoPostDurationSec: data.max_video_post_duration_sec || 0,
     };
   }
 

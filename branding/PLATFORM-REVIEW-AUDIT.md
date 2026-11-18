@@ -24,8 +24,8 @@ can do it. **Code** = still needs building before that platform's review.
 | Terms require following each platform's terms; the user chooses what is posted | X, Pinterest, TikTok | Done: terms sections 3 and 5 |
 | Data Deletion Instructions page (usable as Meta's "Data Deletion Instructions URL") | Meta | Done: `/data-deletion` |
 | Deletion requests completed within 7 days | YouTube III.D | Done in the policy text. **You** must actually do it, see below |
-| Contact page with business email and address | Meta, LinkedIn, YouTube | Done: `/contact`. **You:** a phone number is still missing |
-| Legal business name matches the business verification documents | Meta, LinkedIn | **You:** the site says "Wrecking Social, a 25M Company". Replace it with the exact registered legal name in `apps/frontend/src/components/website/website.company.ts` |
+| Contact page with business email, phone and address | Meta, LinkedIn, YouTube | Done: `/contact` and the footer of every page |
+| Legal business name matches the business verification documents | Meta, LinkedIn | Done: "25M Printing" on every page and in the policies. Use exactly this name in Meta Business Verification and the developer consoles |
 | No platform names or logos in the app name or icon | LinkedIn, TikTok, Meta | Done: the icon is the wrecking-ball speech bubble |
 | Crawlable, sitemap, robots | Meta, Google | Done: `/robots.txt`, `/sitemap.xml` |
 | No inflated claims or other companies' testimonials | All (misleading content) | Done: removed Postiz's "20,000+ users" claims and testimonials |
@@ -35,11 +35,11 @@ can do it. **Code** = still needs building before that platform's review.
 | Requirement | Platform | Status |
 |---|---|---|
 | Privacy level has no default, the user must choose | TikTok | Done (it defaulted to Public before) |
-| Allow Comment / Duet / Stitch unchecked by default | TikTok | Done (Comments was checked before) |
+| Allow Comment / Duet / Stitch unchecked by default, greyed out when the creator turned them off | TikTok | Done (Comments was checked before; Duet/Stitch are off for photos) |
 | "By posting, you agree to TikTok's Music Usage Confirmation" above Publish on every direct post | TikTok | Done (before, it only showed with a brand disclosure) |
-| Show the creator's TikTok nickname; use `creator_info` for privacy options, `can_post` and max video length | TikTok | **Code:** not built. The privacy list is hard-coded |
-| Commercial content labels "Promotional content" and "Paid partnership"; branded content cannot be private | TikTok | **Code:** labels differ, and the private rule is not enforced |
-| "Processing can take a few minutes" notice after posting | TikTok | **Code:** missing |
+| Show the creator's TikTok nickname; use `creator_info` for privacy options, posting status and max video length | TikTok | Done: loaded every time the post screen opens. When TikTok refuses new posts the screen says so (the post can still be scheduled) |
+| Commercial content labels "Promotional content" and "Paid partnership"; branded content cannot be private | TikTok | Done: TikTok's exact labels, at least one choice required when disclosure is on, "private" unavailable for branded content |
+| "Processing can take a few minutes" notice after posting | TikTok | Done: shown under the publish declaration |
 | Link to the YouTube Terms of Service on the upload screen, and a Community Guidelines confirmation | YouTube | Done: notice under the YouTube settings |
 | Visible privacy status (public, unlisted, private) | YouTube | Done (already there) |
 | Disconnecting a channel destroys its access token | Meta, Google, LinkedIn | Done: deleting a channel now destroys its tokens (before, they stayed in the database) |
@@ -49,7 +49,7 @@ can do it. **Code** = still needs building before that platform's review.
 ## Things only the business can do
 
 1. **Deploy this version on wreckingsocial.com.** Set `FRONTEND_URL=https://wreckingsocial.com`. Reviewers check the live site, and today it still shows the old demo page.
-2. **Use the exact legal name and add a phone number** on the site (one file: `website.company.ts`). They must match your business verification documents.
+2. **Use the same business name everywhere:** "25M Printing" and (708) 398-3232, as on the site, in Meta Business Verification, LinkedIn and every developer console.
 3. **Have a lawyer review** `/privacy` and `/terms`. They are written to match what the app really does, but they are not legal advice.
 4. **Set up a business mailbox** such as privacy@ or support@wreckingsocial.com and use it for every developer account. Personal email fails LinkedIn.
 5. **Verify the domain**: Google Search Console, TikTok URL verification (the website, terms, privacy and media URLs), and Meta Business Manager.
@@ -64,4 +64,4 @@ can do it. **Code** = still needs building before that platform's review.
 - **X:** the Developer Agreement's "service bureau" clause may not allow one shared X app posting for every customer. Get legal advice, or have each customer bring their own X app.
 - **Reddit:** commercial schedulers need Reddit's approval and probably a paid contract.
 - **LinkedIn Community Management:** a rejection is final for that app, so have everything ready before you apply.
-- **TikTok:** the strictest UX audit. Finish the three TikTok **Code** items above before applying.
+- **TikTok:** the strictest UX audit. Record the screencast with a TikTok sandbox account and walk through every item above.

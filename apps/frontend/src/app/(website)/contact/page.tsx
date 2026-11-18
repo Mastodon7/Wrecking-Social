@@ -4,6 +4,8 @@ import {
   COMPANY_ADDRESS_LINES,
   COMPANY_EMAIL,
   COMPANY_NAME,
+  COMPANY_PHONE,
+  COMPANY_PHONE_LINK,
 } from '@gitroom/frontend/components/website/website.company';
 
 export const metadata: Metadata = {
@@ -23,7 +25,7 @@ export default function ContactPage() {
         request? Email us and a person on our team will get back to you,
         usually within one business day.
       </p>
-      <div className="grid gap-[16px] md:grid-cols-2">
+      <div className="grid gap-[16px] md:grid-cols-3">
         <div className="rounded-[14px] border border-ws-line bg-ws-inkSoft p-[20px] flex flex-col gap-[6px]">
           <h2 className="ws-display text-[20px] font-[700] text-white">Email</h2>
           <a
@@ -34,8 +36,19 @@ export default function ContactPage() {
           </a>
         </div>
         <div className="rounded-[14px] border border-ws-line bg-ws-inkSoft p-[20px] flex flex-col gap-[6px]">
+          <h2 className="ws-display text-[20px] font-[700] text-white">Phone</h2>
+          <a
+            href={COMPANY_PHONE_LINK}
+            className="text-ws-green underline text-[17px]"
+          >
+            {COMPANY_PHONE}
+          </a>
+        </div>
+        <div className="rounded-[14px] border border-ws-line bg-ws-inkSoft p-[20px] flex flex-col gap-[6px]">
           <h2 className="ws-display text-[20px] font-[700] text-white">Mailing address</h2>
           <address className="not-italic text-ws-text text-[16px] leading-[1.6]">
+            Wrecking Social
+            <br />
             {COMPANY_NAME}
             <br />
             {COMPANY_ADDRESS_LINES.map((line) => (

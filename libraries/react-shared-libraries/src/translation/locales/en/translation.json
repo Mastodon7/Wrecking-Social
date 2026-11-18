@@ -207,13 +207,10 @@
   "this_feature_available_only_for_photos": "This feature available only for photos, it will add a default music that you can change later.",
   "allow_user_to": "Allow User To:",
   "tiktok_video_features": "Video features",
-  "your_video_will_be_labeled_promotional": "Your video will be labeled \"Promotional Content\".",
   "this_cannot_be_changed_once_posted": "This cannot be changed once your video is posted.",
   "turn_on_to_disclose_video_promotes": "Turn on to disclose that this video promotes goods or services in exchange for something of value. You video could promote yourself, a third party, or both.",
   "you_are_promoting_yourself": "You are promoting yourself or your own brand.",
-  "this_video_will_be_classified_brand_organic": "This video will be classified as Brand Organic.",
   "you_are_promoting_another_brand": "You are promoting another brand or a third party.",
-  "this_video_will_be_classified_branded_content": "This video will be classified as Branded Content.",
   "by_posting_you_agree_to_tiktoks": "By posting, you agree to TikTok's",
   "music_usage_confirmation": "Music Usage Confirmation",
   "branded_content_policy": "Branded Content Policy",
@@ -941,5 +938,13 @@
   "ws_data_deletion": "Data Deletion",
   "youtube_upload_agreement": "By uploading, you confirm this video follows the YouTube Community Guidelines and you agree to the",
   "youtube_terms_of_service": "YouTube Terms of Service",
-  "youtube_community_guidelines": "Community Guidelines"
+  "youtube_community_guidelines": "Community Guidelines",
+  "tiktok_branded_not_private": "Branded content visibility cannot be set to private.",
+  "tiktok_posting_to": "Posting to TikTok as",
+  "tiktok_cannot_post_now": "TikTok is not accepting new posts from this account right now. Please try again later.",
+  "tiktok_max_video_length": "This account can post videos up to {{seconds}} seconds long.",
+  "tiktok_disclosure_choose": "You need to indicate if your content promotes yourself, a third party, or both.",
+  "tiktok_labeled_paid_partnership": "Your photo/video will be labeled as 'Paid partnership'.",
+  "tiktok_labeled_promotional_content": "Your photo/video will be labeled as 'Promotional content'.",
+  "tiktok_processing_notice": "After you publish, it can take a few minutes for TikTok to process your post before it appears on your profile."
 }

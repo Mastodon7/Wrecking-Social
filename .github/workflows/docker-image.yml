@@ -6,6 +6,7 @@
 # After a successful build on main, this asks Coolify to redeploy, so the
 # server always pulls the image that was just built. Coolify's own "deploy on
 # push" is off for this app, because it fired before the image was ready.
+# Coolify 4.7+ only accepts POST on /api/v1/deploy.
 # Needs the repository secret COOLIFY_TOKEN (a Coolify API token with only the
 # "deploy" permission). Without it the deploy step is skipped.
 name: Docker image
@@ -63,7 +64,7 @@ jobs:
       - name: Deploy on Coolify
         if: github.ref == 'refs/heads/main' && env.COOLIFY_TOKEN != ''
         run: |
-          curl --fail-with-body -sS --max-time 60 \
+          curl --fail-with-body -sS --max-time 60 -X POST \
             -H "Authorization: Bearer $COOLIFY_TOKEN" \
             "$COOLIFY_DEPLOY_URL"
 
