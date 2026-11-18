@@ -5,6 +5,8 @@ import {
   COMPANY_ADDRESS_LINES,
   COMPANY_EMAIL,
   COMPANY_NAME,
+  COMPANY_PHONE,
+  COMPANY_PHONE_LINK,
   LEGAL_EFFECTIVE_DATE,
 } from '@gitroom/frontend/components/website/website.company';
 
@@ -382,6 +384,8 @@ export default function PrivacyPage() {
           </span>
         ))}
         Email: <a href={`mailto:${COMPANY_EMAIL}`}>{COMPANY_EMAIL}</a>
+        <br />
+        Phone: <a href={COMPANY_PHONE_LINK}>{COMPANY_PHONE}</a>
       </p>
     </LegalPage>
   );

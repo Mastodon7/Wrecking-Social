@@ -3,6 +3,8 @@ import {
   COMPANY_ADDRESS_LINES,
   COMPANY_EMAIL,
   COMPANY_NAME,
+  COMPANY_PHONE,
+  COMPANY_PHONE_LINK,
 } from '@gitroom/frontend/components/website/website.company';
 
 export const WebsiteFooter = () => {
@@ -22,7 +24,7 @@ export const WebsiteFooter = () => {
               Wrecking Social
             </span>
           </div>
-          <p>{COMPANY_NAME}</p>
+          <p>A service of {COMPANY_NAME}</p>
           <address className="not-italic">
             {COMPANY_ADDRESS_LINES.map((line) => (
               <div key={line}>{line}</div>
@@ -30,6 +32,9 @@ export const WebsiteFooter = () => {
           </address>
           <a href={`mailto:${COMPANY_EMAIL}`} className="text-ws-green underline">
             {COMPANY_EMAIL}
+          </a>
+          <a href={COMPANY_PHONE_LINK} className="hover:text-white">
+            {COMPANY_PHONE}
           </a>
         </div>
         <nav className="flex flex-col gap-[10px]" aria-label="Legal">
