@@ -1,7 +1,7 @@
 // Public business details shown on the website and in the legal pages
 // Legal business name; it must match the business verification documents
 // given to Meta, LinkedIn, Google and TikTok
-export const COMPANY_NAME = '25M Printing';
+export const COMPANY_NAME = '25M Printing Company';
 export const COMPANY_PHONE = '(708) 398-3232';
 export const COMPANY_PHONE_LINK = 'tel:+17083983232';
 // Support and general questions
