@@ -870,6 +870,29 @@ export class IntegrationRepository {
     });
   }
 
+  // Channels connected by one platform account, across every workspace.
+  // rootInternalId keeps the account that logged in (a Facebook user stays
+  // there after one of their Pages is picked), internalId is the account
+  // itself for platforms without pages
+  getActiveChannelsOfPlatformUser(providers: string[], platformUserId: string) {
+    return this._integration.model.integration.findMany({
+      where: {
+        deletedAt: null,
+        providerIdentifier: {
+          in: providers,
+        },
+        OR: [
+          { rootInternalId: platformUserId },
+          { internalId: platformUserId },
+        ],
+      },
+      select: {
+        id: true,
+        organizationId: true,
+      },
+    });
+  }
+
   async deleteChannel(org: string, id: string) {
     const hash = (value: string) =>
       createHash('md5').update(value).digest('hex');

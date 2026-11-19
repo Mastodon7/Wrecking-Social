@@ -402,6 +402,13 @@ export class IntegrationService {
     return this._integrationRepository.enableChannel(org, id);
   }
 
+  getActiveChannelsOfPlatformUser(providers: string[], platformUserId: string) {
+    return this._integrationRepository.getActiveChannelsOfPlatformUser(
+      providers,
+      platformUserId
+    );
+  }
+
   async getPostsForChannel(org: string, id: string) {
     return this._integrationRepository.getPostsForChannel(org, id);
   }

@@ -247,6 +247,13 @@ export interface SocialProvider
     | { none: true }
   >;
   mentionFormat?(idOrHandle: string, name: string): string;
+  // A platform's own "app removed" / "delete my data" callback (for example
+  // Meta's deauthorize and data deletion callbacks): returns the platform
+  // user id the request is about, or null when the request is not genuine
+  platformUserFromCallback?(body: Record<string, unknown>): string | null;
+  // Providers whose channels are connected through the same platform app, so
+  // that app's callback removes them too (defaults to this provider)
+  callbackProviders?: string[];
   fetchPageInformation?(
     accessToken: string,
     data: any
