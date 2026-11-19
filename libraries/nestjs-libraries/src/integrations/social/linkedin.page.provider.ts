@@ -39,6 +39,19 @@ export class LinkedinPageProvider
 
   override editor = 'normal' as const;
 
+  // LinkedIn requires the Community Management API (Company Page posting) to
+  // be the only product on its developer app, so Pages can use their own app.
+  // Without LINKEDIN_PAGE_* the shared LinkedIn app is used, as before
+  private clientId() {
+    return (process.env.LINKEDIN_PAGE_CLIENT_ID ||
+      process.env.LINKEDIN_CLIENT_ID)!;
+  }
+
+  private clientSecret() {
+    return (process.env.LINKEDIN_PAGE_CLIENT_SECRET ||
+      process.env.LINKEDIN_CLIENT_SECRET)!;
+  }
+
   override async refreshToken(
     refresh_token: string
   ): Promise<AuthTokenDetails> {
@@ -55,8 +68,8 @@ export class LinkedinPageProvider
         body: new URLSearchParams({
           grant_type: 'refresh_token',
           refresh_token,
-          client_id: process.env.LINKEDIN_CLIENT_ID!,
-          client_secret: process.env.LINKEDIN_CLIENT_SECRET!,
+          client_id: this.clientId(),
+          client_secret: this.clientSecret(),
         }),
       })
     ).json();
@@ -125,9 +138,7 @@ export class LinkedinPageProvider
   override async generateAuthUrl() {
     const state = makeSecureId(6);
     const codeVerifier = makeSecureId(30);
-    const url = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&prompt=none&client_id=${
-      process.env.LINKEDIN_CLIENT_ID
-    }&redirect_uri=${encodeURIComponent(
+    const url = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&prompt=none&client_id=${this.clientId()}&redirect_uri=${encodeURIComponent(
       `${process.env.FRONTEND_URL}/integrations/social/linkedin-page`
     )}&state=${state}&scope=${encodeURIComponent(this.scopes.join(' '))}`;
     return {
@@ -222,8 +233,8 @@ export class LinkedinPageProvider
       'redirect_uri',
       `${process.env.FRONTEND_URL}/integrations/social/linkedin-page`
     );
-    body.append('client_id', process.env.LINKEDIN_CLIENT_ID!);
-    body.append('client_secret', process.env.LINKEDIN_CLIENT_SECRET!);
+    body.append('client_id', this.clientId());
+    body.append('client_secret', this.clientSecret());
 
     const {
       access_token: accessToken,

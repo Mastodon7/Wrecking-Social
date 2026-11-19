@@ -10,7 +10,7 @@ export const COMPANY_ADDRESS_LINES = [
   'Chicago, Illinois 60624',
   'United States',
 ];
-export const LEGAL_EFFECTIVE_DATE = 'November 16, 2026';
+export const LEGAL_EFFECTIVE_DATE = 'November 18, 2026';
 
 // The address of the public website, the same FRONTEND_URL the app runs on
 export const websiteUrl = () =>

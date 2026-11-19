@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     template: '%s | Wrecking Social',
   },
   description:
-    'Wrecking Social is a social media publishing platform. Create, schedule and publish posts to Facebook, Instagram, LinkedIn, TikTok, YouTube, X and more from one calendar.',
+    'Wrecking Social is a social media publishing platform. Create, schedule and publish posts to Facebook, Instagram, Threads, LinkedIn, TikTok, YouTube, Pinterest and more from one calendar.',
   icons: {
     icon: [{ url: '/favicon.ico', sizes: 'any' }],
     apple: '/wrecking-social-icon-180.png',

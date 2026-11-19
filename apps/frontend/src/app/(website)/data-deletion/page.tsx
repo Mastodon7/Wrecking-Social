@@ -52,8 +52,9 @@ export default async function DataDeletionPage(props: {
         <li>Choose <strong>Delete</strong> and confirm.</li>
       </ol>
       <p>
-        The channel&apos;s access tokens are destroyed immediately, its
-        scheduled posts are cancelled, and Wrecking Social can no longer access
+        The channel&apos;s access tokens and profile (name, username and
+        picture) are destroyed immediately, its scheduled posts are
+        cancelled, and Wrecking Social can no longer access
         that account.
       </p>
 
@@ -116,6 +117,17 @@ export default async function DataDeletionPage(props: {
           <strong>TikTok:</strong> in the TikTok app, go to{' '}
           <em>Profile &gt; Settings and privacy &gt; Security &gt; Manage app
           permissions</em> and remove Wrecking Social.
+        </li>
+        <li>
+          <strong>Threads:</strong> in the Threads app, go to{' '}
+          <em>Settings &gt; Account &gt; Website permissions</em>, find
+          Wrecking Social and remove it.
+        </li>
+        <li>
+          <strong>Instagram (connected without a Facebook Page):</strong> in
+          the Instagram app, go to{' '}
+          <em>Settings &gt; Website permissions &gt; Apps and websites</em>,
+          find Wrecking Social and remove it.
         </li>
         <li>
           <strong>LinkedIn:</strong> go to{' '}
