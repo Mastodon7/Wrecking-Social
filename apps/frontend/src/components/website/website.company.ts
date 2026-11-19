@@ -4,7 +4,10 @@
 export const COMPANY_NAME = '25M Printing';
 export const COMPANY_PHONE = '(708) 398-3232';
 export const COMPANY_PHONE_LINK = 'tel:+17083983232';
-export const COMPANY_EMAIL = 'orders@wreckingsocial.com';
+// Support and general questions
+export const COMPANY_EMAIL = 'support@wreckingsocial.com';
+// Privacy questions and data access / deletion requests
+export const PRIVACY_EMAIL = 'privacy@wreckingsocial.com';
 export const COMPANY_ADDRESS_LINES = [
   '4223 W Lake St, Suite 208',
   'Chicago, Illinois 60624',

@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 import {
   COMPANY_ADDRESS_LINES,
   COMPANY_EMAIL,
+  PRIVACY_EMAIL,
   COMPANY_NAME,
   COMPANY_PHONE,
   COMPANY_PHONE_LINK,
@@ -25,14 +26,23 @@ export default function ContactPage() {
         request? Email us and a person on our team will get back to you,
         usually within one business day.
       </p>
-      <div className="grid gap-[16px] md:grid-cols-3">
+      <div className="grid gap-[16px] md:grid-cols-2">
         <div className="rounded-[14px] border border-ws-line bg-ws-inkSoft p-[20px] flex flex-col gap-[6px]">
-          <h2 className="ws-display text-[20px] font-[700] text-white">Email</h2>
+          <h2 className="ws-display text-[20px] font-[700] text-white">Support</h2>
           <a
             href={`mailto:${COMPANY_EMAIL}`}
             className="text-ws-green underline text-[17px]"
           >
             {COMPANY_EMAIL}
+          </a>
+        </div>
+        <div className="rounded-[14px] border border-ws-line bg-ws-inkSoft p-[20px] flex flex-col gap-[6px]">
+          <h2 className="ws-display text-[20px] font-[700] text-white">Privacy and data requests</h2>
+          <a
+            href={`mailto:${PRIVACY_EMAIL}`}
+            className="text-ws-green underline text-[17px]"
+          >
+            {PRIVACY_EMAIL}
           </a>
         </div>
         <div className="rounded-[14px] border border-ws-line bg-ws-inkSoft p-[20px] flex flex-col gap-[6px]">

@@ -99,6 +99,34 @@ export class PostsService {
         platformUserId
       );
 
+    await this.removeChannels(channels);
+
+    return {
+      platformUserId,
+      channelIds: channels.map((channel) => channel.id),
+    };
+  }
+
+  // Channels that still cannot be used `days` after they needed a reconnect
+  // (access removed on the platform, token expired) or were left half
+  // connected are removed with their data, so platform data is never kept
+  // for an account we can no longer reach. The privacy policy promises this
+  // within 15 days, so keep `days` plus the daily schedule under that.
+  async deleteChannelsDisconnectedFor(days: number) {
+    const channels =
+      await this._integrationService.getChannelsDisconnectedBefore(
+        new Date(Date.now() - days * 24 * 60 * 60 * 1000)
+      );
+
+    await this.removeChannels(channels);
+    return channels.map((channel) => channel.id);
+  }
+
+  // The same as deleting each channel in the app: scheduled posts are
+  // cancelled, then the tokens and profile of the channel are destroyed
+  private async removeChannels(
+    channels: { id: string; organizationId: string }[]
+  ) {
     for (const channel of channels) {
       const posts = await this._integrationService.getPostsForChannel(
         channel.organizationId,
@@ -112,11 +140,6 @@ export class PostsService {
         channel.id
       );
     }
-
-    return {
-      platformUserId,
-      channelIds: channels.map((channel) => channel.id),
-    };
   }
 
   searchForMissingThreeHoursPosts() {

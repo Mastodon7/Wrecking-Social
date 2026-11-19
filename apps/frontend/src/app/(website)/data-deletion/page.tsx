@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Metadata } from 'next';
 import { LegalPage } from '@gitroom/frontend/components/website/legal.page';
 import {
-  COMPANY_EMAIL,
+  PRIVACY_EMAIL,
   LEGAL_EFFECTIVE_DATE,
 } from '@gitroom/frontend/components/website/website.company';
 
@@ -77,8 +77,8 @@ export default async function DataDeletionPage(props: {
       <p>
         If you cannot sign in, or you want every remaining record about you
         permanently erased, email{' '}
-        <a href={`mailto:${COMPANY_EMAIL}?subject=Data%20deletion%20request`}>
-          {COMPANY_EMAIL}
+        <a href={`mailto:${PRIVACY_EMAIL}?subject=Data%20deletion%20request`}>
+          {PRIVACY_EMAIL}
         </a>{' '}
         with the subject &quot;Data deletion request&quot;, from the email
         address you used for Wrecking Social. Tell us which account or channels

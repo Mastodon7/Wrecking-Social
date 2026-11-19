@@ -908,6 +908,25 @@ export class IntegrationRepository {
     });
   }
 
+  // Channels that have needed a reconnect (or were left half connected)
+  // since before the given date: nothing has touched them since they were
+  // flagged, so updatedAt is when that happened
+  getChannelsDisconnectedBefore(date: Date) {
+    return this._integration.model.integration.findMany({
+      where: {
+        deletedAt: null,
+        updatedAt: {
+          lt: date,
+        },
+        OR: [{ refreshNeeded: true }, { inBetweenSteps: true }],
+      },
+      select: {
+        id: true,
+        organizationId: true,
+      },
+    });
+  }
+
   async deleteChannel(org: string, id: string) {
     const hash = (value: string) =>
       createHash('md5').update(value).digest('hex');

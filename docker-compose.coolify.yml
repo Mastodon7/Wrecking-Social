@@ -26,6 +26,9 @@ services:
       REDIS_URL: redis://redis:6379
       TEMPORAL_ADDRESS: temporal:7233
       IS_GENERAL: 'true'
+      # Starts the background jobs: retry posts that missed their time, and
+      # remove channels that have needed a reconnect for 14 days
+      RUN_CRON: 'true'
       DISABLE_REGISTRATION: ${DISABLE_REGISTRATION:-false}
       STORAGE_PROVIDER: local
       UPLOAD_DIRECTORY: /uploads
