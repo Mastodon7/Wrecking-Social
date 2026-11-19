@@ -9,25 +9,21 @@ export const metadata: Metadata = {
   alternates: { canonical: '/' },
 };
 
+// Only platforms Wrecking Social has apps for. Add one here once its app is
+// approved and set up: reviewers treat listing unavailable platforms as
+// misleading, and Reddit needs written approval before it is advertised
 const platforms = [
   'Facebook Pages',
   'Instagram',
   'Threads',
   'LinkedIn',
   'LinkedIn Pages',
-  'X',
   'TikTok',
   'YouTube',
   'Pinterest',
   'Google Business Profile',
   'Bluesky',
   'Mastodon',
-  'Reddit',
-  'Discord',
-  'Telegram',
-  'Tumblr',
-  'WordPress',
-  'Medium',
 ];
 
 const features = [
