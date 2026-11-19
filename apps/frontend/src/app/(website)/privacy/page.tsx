@@ -102,32 +102,36 @@ export default function PrivacyPage() {
           <tr>
             <td>Facebook (Meta)</td>
             <td>
-              Lists the Facebook Pages you manage so you can choose one,
-              publishes the posts you schedule to that Page, and reads the
-              Page&apos;s post and Page statistics for analytics.
+              Lists the Facebook Pages you manage so you can choose one, publishes
+              the posts you schedule to that Page (and the follow-up comments
+              you add to them), and reads the Page&apos;s post and Page
+              statistics for analytics.
             </td>
           </tr>
           <tr>
             <td>Instagram (Meta)</td>
             <td>
               Reads your Instagram professional account&apos;s profile,
-              publishes the photos, videos, reels and carousels you schedule,
-              and reads statistics of your posts for analytics.
+              publishes the photos, videos, reels and carousels you schedule
+              (and the follow-up comments you add to them), and reads
+              statistics of your account and posts for analytics.
             </td>
           </tr>
           <tr>
             <td>Threads (Meta)</td>
             <td>
               Reads your Threads profile, publishes the posts you schedule and
-              reads their statistics.
+              the replies you add to them, and reads their statistics.
             </td>
           </tr>
           <tr>
             <td>TikTok</td>
             <td>
-              Reads your basic TikTok profile (display name and avatar) and the
-              posting options TikTok returns for your account, and uploads the
-              videos or photos you choose with the settings you pick.
+              Reads your TikTok profile (display name, avatar and username),
+              the posting options TikTok returns for your account, your
+              account statistics (such as followers and likes) and the list
+              of your videos with their statistics for analytics, and uploads
+              the videos or photos you choose with the settings you pick.
             </td>
           </tr>
           <tr>
@@ -135,37 +139,64 @@ export default function PrivacyPage() {
             <td>
               Reads your channel&apos;s name and picture, uploads the videos
               you schedule with the title, description, privacy status and
-              other details you enter, and reads your videos&apos; statistics.
+              other details you enter, and reads your channel and video
+              statistics from YouTube Analytics.
             </td>
           </tr>
           <tr>
             <td>Google Business Profile</td>
             <td>
-              Lists the business locations you manage so you can choose one
-              and publishes the updates you schedule to it.
+              Lists the business locations you manage so you can choose one,
+              publishes the updates you schedule to it and reads its
+              statistics for analytics.
             </td>
           </tr>
           <tr>
             <td>LinkedIn</td>
             <td>
-              Reads your name and photo (and the LinkedIn Pages you
-              administer, if you connect a Page) and publishes the posts you
-              schedule.
+              Reads your name and photo (and the LinkedIn Pages you administer,
+              if you connect a Page), publishes the posts you schedule and
+              the follow-up comments you add to them, and, for Pages, reads
+              Page and post statistics for analytics.
             </td>
           </tr>
           <tr>
-            <td>X, Pinterest, Reddit and others</td>
+            <td>Pinterest</td>
             <td>
-              Read your account&apos;s basic profile (and for Pinterest your
-              boards) and publish the posts, Pins or submissions you schedule.
+              Reads your account&apos;s profile and your boards so you can
+              choose one, publishes each Pin you create and schedule, and reads
+              your account and Pin statistics for analytics.
+            </td>
+          </tr>
+          <tr>
+            <td>X</td>
+            <td>
+              Reads your account&apos;s basic profile, publishes the posts you
+              schedule and reads their statistics.
+            </td>
+          </tr>
+          <tr>
+            <td>Reddit</td>
+            <td>
+              Reads your username, searches the subreddits you pick and their
+              post flairs, and publishes the posts you schedule.
             </td>
           </tr>
         </tbody>
       </table>
       <p>
-        We do not read your private messages, we do not post anything you did
-        not create or schedule, and we do not follow, like or comment on your
-        behalf unless you set that up yourself.
+        We do not read your private messages, and we do not post anything you
+        did not create or schedule. We do not follow, like or comment on your
+        behalf, except for the optional automations you turn on yourself for
+        a post (for example, adding a reply once the post reaches a number of
+        likes), which you can turn off at any time.
+      </p>
+      <p>
+        We do not store content or statistics from these platforms beyond what
+        the Service needs: the profile of each connected account and the IDs
+        and links of the posts we publish for you. Statistics are fetched from
+        the platform when you open analytics and kept in a temporary cache for
+        up to one hour.
       </p>
 
       <h3>Information collected automatically</h3>
@@ -283,9 +314,17 @@ export default function PrivacyPage() {
           account is open.
         </li>
         <li>
-          Access tokens of a channel are kept while the channel is connected.
-          When you delete a channel, its access tokens are destroyed right away
-          and we stop all access to that account.
+          Access tokens and the profile of a channel (its name, username and
+          picture) are kept while the channel is connected. When you delete a
+          channel, its access tokens and profile are destroyed right away, its
+          scheduled posts are cancelled and we stop all access to that
+          account.
+        </li>
+        <li>
+          If you remove our access on the platform itself (for example in your
+          Google security settings), we can no longer reach the account and
+          the channel shows as disconnected. Delete the channel in the app, or
+          email us, to have its data erased.
         </li>
         <li>
           When you delete your account, we immediately and irreversibly

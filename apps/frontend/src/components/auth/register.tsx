@@ -98,6 +98,7 @@ export function RegisterAfter({
     genericOauth,
     neynarClientId,
     appleClientId,
+    googleLogin,
     billingEnabled,
   } = useVariables();
   const [loading, setLoading] = useState(false);
@@ -109,6 +110,16 @@ export function RegisterAfter({
   const isAfterProvider = useMemo(() => {
     return !!token && !!provider;
   }, [token, provider]);
+  // Only offer sign-up buttons that are configured, so nobody (including a
+  // platform reviewer) clicks a button that cannot work
+  const hasSocialLogin =
+    !isAfterProvider &&
+    (!isGeneral ||
+      !!genericOauth ||
+      googleLogin ||
+      !!appleClientId ||
+      !!neynarClientId ||
+      billingEnabled);
   const resolver = useMemo(() => {
     return classValidatorResolver(CreateOrgUserDto);
   }, []);
@@ -165,11 +176,17 @@ export function RegisterAfter({
               {t('sign_up', 'Sign Up')}
             </h1>
           </div>
-          <div className="text-[14px] mt-[32px] mb-[12px]">
-            {t('continue_with', 'Continue With')}
-          </div>
-          <div className="flex flex-col text-[14px]">
-            {!isAfterProvider &&
+          {hasSocialLogin && (
+            <div className="text-[14px] mt-[32px] mb-[12px]">
+              {t('continue_with', 'Continue With')}
+            </div>
+          )}
+          <div
+            className={`flex flex-col text-[14px]${
+              hasSocialLogin ? '' : ' mt-[32px]'
+            }`}
+          >
+            {hasSocialLogin &&
               (!isGeneral ? (
                 <GithubProvider />
               ) : (
@@ -177,14 +194,14 @@ export function RegisterAfter({
                   {genericOauth && isGeneral ? (
                     <OauthProvider />
                   ) : (
-                    <GoogleProvider />
+                    googleLogin && <GoogleProvider />
                   )}
                   {!!appleClientId && <AppleProvider />}
                   {!!neynarClientId && <FarcasterProvider />}
                   {billingEnabled && <WalletProvider />}
                 </div>
               ))}
-            {!isAfterProvider && (
+            {hasSocialLogin && (
               <div className="h-[20px] mb-[24px] mt-[24px] relative">
                 <div className="absolute w-full h-[1px] bg-fifth top-[50%] -translate-y-[50%]" />
                 <div

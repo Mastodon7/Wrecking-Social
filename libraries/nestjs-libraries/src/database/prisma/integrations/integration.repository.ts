@@ -383,6 +383,20 @@ export class IntegrationRepository {
           ]),
         }
       : {};
+    // deleteChannel hashes the name of a deleted channel, so a deleted channel
+    // that is connected again gets its name back. A live channel keeps its
+    // stored name, as before
+    const previous = await this._integration.model.integration.findUnique({
+      where: {
+        organizationId_internalId: {
+          internalId,
+          organizationId: org,
+        },
+      },
+      select: {
+        deletedAt: true,
+      },
+    });
     const upsert = await this._integration.model.integration.upsert({
       where: {
         organizationId_internalId: {
@@ -424,6 +438,7 @@ export class IntegrationRepository {
             }
           : {}),
         ...(picture ? { picture } : {}),
+        ...(previous?.deletedAt ? { name } : {}),
         profile: username,
         providerIdentifier: provider,
         token,
@@ -881,13 +896,18 @@ export class IntegrationRepository {
       },
       select: {
         token: true,
+        name: true,
       },
     });
 
-    // Destroy the credentials of a deleted channel. Connecting the same
-    // account again revives this row through createOrUpdateIntegration with
-    // a new token, and it keeps the stored refresh token when the platform
-    // sends none, so the refresh token is cleared instead of hashed
+    // Destroy the credentials and the profile data of a deleted channel.
+    // Platforms (LinkedIn, Google, X) require their user data to be removed
+    // when the user disconnects. Connecting the same account again revives
+    // this row through createOrUpdateIntegration with a new token, name,
+    // username and picture. internalId stays as it is, because that lookup
+    // is how the row is found again. The stored refresh token is kept by
+    // createOrUpdateIntegration when the platform sends none, so it is
+    // cleared instead of hashed
     return this._integration.model.integration.update({
       select: {
         id: true,
@@ -902,6 +922,9 @@ export class IntegrationRepository {
           ? {
               token: hash(integration.token),
               refreshToken: null,
+              name: hash(integration.name),
+              picture: null,
+              profile: null,
             }
           : {}),
       },
