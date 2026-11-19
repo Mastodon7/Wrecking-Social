@@ -114,6 +114,11 @@ export class PostActivity {
   }
 
   @ActivityMethod()
+  async deleteDisconnectedChannels() {
+    return this._postService.deleteChannelsDisconnectedFor(14);
+  }
+
+  @ActivityMethod()
   async searchForMissingThreeHoursPosts() {
     const list = await this._postService.searchForMissingThreeHoursPosts();
     for (const post of list) {

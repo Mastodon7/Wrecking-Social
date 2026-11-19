@@ -409,6 +409,10 @@ export class IntegrationService {
     );
   }
 
+  getChannelsDisconnectedBefore(date: Date) {
+    return this._integrationRepository.getChannelsDisconnectedBefore(date);
+  }
+
   async getPostsForChannel(org: string, id: string) {
     return this._integrationRepository.getPostsForChannel(org, id);
   }

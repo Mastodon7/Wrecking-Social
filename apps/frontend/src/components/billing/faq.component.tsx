@@ -27,7 +27,7 @@ const useFaqList = () => {
       title: t('ws_faq_open_source_title', 'What is Wrecking Social built on?'),
       description: t(
         'ws_faq_open_source_description',
-        'Wrecking Social is built on Postiz, an open-source social media scheduler released under the GNU AGPL-3.0 license. To get the source code of the version we run, email <a href="mailto:orders@wreckingsocial.com" style="text-decoration: underline;">orders@wreckingsocial.com</a>.'
+        'Wrecking Social is built on Postiz, an open-source social media scheduler released under the GNU AGPL-3.0 license. To get the source code of the version we run, email <a href="mailto:support@wreckingsocial.com" style="text-decoration: underline;">support@wreckingsocial.com</a>.'
       ),
     },
     {

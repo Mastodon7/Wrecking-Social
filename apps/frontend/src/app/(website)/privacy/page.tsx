@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import { LegalPage } from '@gitroom/frontend/components/website/legal.page';
 import {
   COMPANY_ADDRESS_LINES,
-  COMPANY_EMAIL,
+  PRIVACY_EMAIL,
   COMPANY_NAME,
   COMPANY_PHONE,
   COMPANY_PHONE_LINK,
@@ -31,7 +31,7 @@ export default function PrivacyPage() {
       </p>
       <p>
         If you have a question about this policy or your data, contact us at{' '}
-        <a href={`mailto:${COMPANY_EMAIL}`}>{COMPANY_EMAIL}</a>.
+        <a href={`mailto:${PRIVACY_EMAIL}`}>{PRIVACY_EMAIL}</a>.
       </p>
 
       <h2>1. Information we collect</h2>
@@ -304,7 +304,9 @@ export default function PrivacyPage() {
         >
           Google security settings
         </a>
-        , in addition to the ways in section 6.
+        , in addition to the ways in section 6. When you do, the data we
+        received from Google for that account is erased within 15 days (see
+        section 5), and right away if you also delete the channel in the app.
       </p>
 
       <h2>5. How long we keep information</h2>
@@ -323,8 +325,11 @@ export default function PrivacyPage() {
         <li>
           If you remove our access on the platform itself (for example in your
           Google security settings), we can no longer reach the account and
-          the channel shows as disconnected. Delete the channel in the app, or
-          email us, to have its data erased.
+          the channel shows as needing to be reconnected. If it is not
+          reconnected within 14 days, the channel and its data are erased
+          automatically, so its data is gone within 15 days of you removing
+          our access. To have it erased right away, delete the channel in the
+          app or email us.
         </li>
         <li>
           When you delete your account, we immediately and irreversibly
@@ -355,7 +360,7 @@ export default function PrivacyPage() {
         </li>
         <li>
           <strong>Ask us:</strong> email{' '}
-          <a href={`mailto:${COMPANY_EMAIL}`}>{COMPANY_EMAIL}</a> from the
+          <a href={`mailto:${PRIVACY_EMAIL}`}>{PRIVACY_EMAIL}</a> from the
           email address of your account to access, correct, export or delete
           your data. We complete deletion requests within 7 days and other
           requests within 30 days.
@@ -422,7 +427,7 @@ export default function PrivacyPage() {
             <br />
           </span>
         ))}
-        Email: <a href={`mailto:${COMPANY_EMAIL}`}>{COMPANY_EMAIL}</a>
+        Email: <a href={`mailto:${PRIVACY_EMAIL}`}>{PRIVACY_EMAIL}</a>
         <br />
         Phone: <a href={COMPANY_PHONE_LINK}>{COMPANY_PHONE}</a>
       </p>
