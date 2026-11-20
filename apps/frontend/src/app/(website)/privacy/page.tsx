@@ -64,14 +64,21 @@ export default function PrivacyPage() {
 
       <h3>Information from social media platforms you connect</h3>
       <p>
-        When you connect a social media account (a &quot;channel&quot;), you
-        sign in on that platform&apos;s own page and approve the access
-        Wrecking Social asks for. We then receive:
+        When you connect a social media account (a &quot;channel&quot;), how
+        you connect depends on the platform. For most platforms you sign in on
+        the platform&apos;s own page and approve the access Wrecking Social
+        asks for. For Bluesky, you enter your Bluesky handle and an app
+        password that you create in Bluesky&apos;s settings for Wrecking
+        Social (please do not use your main Bluesky password). We use the
+        permission or credential you give us only to do what you ask in the
+        app, such as publishing a scheduled post or showing analytics. What we
+        receive depends on the account type and the permissions you grant:
       </p>
       <ul>
         <li>
-          <strong>Access tokens</strong> (and refresh tokens where the platform
-          provides them) that let us act on the account on your behalf;
+          <strong>Access tokens or connection credentials</strong> (and
+          refresh tokens where the platform provides them) that let us act on
+          the account on your behalf. We store them encrypted;
         </li>
         <li>
           <strong>Basic profile information</strong> of the account or page:
@@ -89,7 +96,8 @@ export default function PrivacyPage() {
       </ul>
       <p>
         We only request the permissions a feature needs. The table below
-        shows, for the main platforms, what we use the access for.
+        shows, for each platform you can connect, what we use the access
+        for.
       </p>
       <table>
         <thead>
@@ -169,17 +177,12 @@ export default function PrivacyPage() {
             </td>
           </tr>
           <tr>
-            <td>X</td>
+            <td>Bluesky</td>
             <td>
-              Reads your account&apos;s basic profile, publishes the posts you
-              schedule and reads their statistics.
-            </td>
-          </tr>
-          <tr>
-            <td>Reddit</td>
-            <td>
-              Reads your username, searches the subreddits you pick and their
-              post flairs, and publishes the posts you schedule.
+              Signs in to your account with the handle and app password you
+              enter, reads your profile (display name, handle and picture),
+              and publishes the posts you schedule and the replies you add to
+              them.
             </td>
           </tr>
         </tbody>
@@ -240,16 +243,22 @@ export default function PrivacyPage() {
         </li>
         <li>
           <strong>With people in your workspace:</strong> teammates you invite
-          can see the workspace&apos;s channels, posts and analytics.
+          can see and use the workspace&apos;s channels, posts and analytics,
+          including statistics from YouTube and the other platforms you
+          connect. Only invite people you want to have that access.
         </li>
         <li>
           <strong>With service providers</strong> that run parts of the
           Service for us under contract and only on our instructions: our
           hosting and storage providers, our email delivery provider, Stripe
           for payments, and, only when you use an AI feature, our AI provider
-          (such as OpenAI), which receives the text or request you send to
-          that feature under terms that do not allow it to train its models on
-          that data.
+          (such as OpenAI), which receives your request and the information
+          needed to answer it (for example the text of a post or the names of
+          your connected channels) under terms that do not allow it to train
+          its models on that data. Statistics and other content we receive
+          from Google APIs are never sent to an AI provider; only the name of
+          a connected channel may be, when you ask the AI assistant about your
+          channels.
         </li>
         <li>
           <strong>For legal reasons:</strong> if the law requires it, or to
@@ -295,18 +304,41 @@ export default function PrivacyPage() {
         is needed for security, or the law requires it.
       </p>
       <p>
-        You can remove Wrecking Social&apos;s access to your Google account at
-        any time from your{' '}
+        You can remove a YouTube or Google Business Profile connection in
+        Wrecking Social, or revoke our access at any time in your{' '}
         <a
           href="https://security.google.com/settings/security/permissions"
           target="_blank"
           rel="noreferrer"
         >
-          Google security settings
+          Google account permissions
         </a>
-        , in addition to the ways in section 6. When you do, the data we
-        received from Google for that account is erased within 15 days (see
-        section 5), and right away if you also delete the channel in the app.
+        . What happens to the data we stored under that authorization:
+      </p>
+      <ul>
+        <li>
+          <strong>You delete the channel in Wrecking Social:</strong> we ask
+          Google to revoke our access right away and delete its access tokens,
+          channel profile and the IDs and links of its published videos and
+          posts right away, and always within 7 days. If the same channel is
+          still connected in another Wrecking Social workspace, that workspace
+          keeps its own access.
+        </li>
+        <li>
+          <strong>You delete your Wrecking Social account, or ask us to delete
+          your stored YouTube data:</strong> we delete it within 7 days.
+          Deleting your account does not need a second request.
+        </li>
+        <li>
+          <strong>You revoke access in your Google account settings:</strong>{' '}
+          we check every connected YouTube and Google Business Profile channel
+          daily, and delete the data we stored for it within 15 days of the
+          revocation.
+        </li>
+      </ul>
+      <p>
+        Deleting data from Wrecking Social does not delete your videos or
+        anything else on YouTube or Google.
       </p>
 
       <h2>5. How long we keep information</h2>
@@ -316,28 +348,39 @@ export default function PrivacyPage() {
           account is open.
         </li>
         <li>
-          Access tokens and the profile of a channel (its name, username and
-          picture) are kept while the channel is connected. When you delete a
-          channel, its access tokens and profile are destroyed right away, its
-          scheduled posts are cancelled and we stop all access to that
-          account.
+          Access tokens or credentials and the profile of a channel (its name,
+          username and picture) are kept while the channel is connected.
         </li>
         <li>
-          If you remove our access on the platform itself (for example in your
-          Google security settings), we can no longer reach the account and
-          the channel shows as needing to be reconnected. If it is not
-          reconnected within 14 days, the channel and its data are erased
-          automatically, so its data is gone within 15 days of you removing
-          our access. To have it erased right away, delete the channel in the
-          app or email us.
+          <strong>When you delete a channel,</strong> we ask the platform to
+          cancel our access where the platform supports it (YouTube and Google
+          Business Profile), destroy its tokens and profile right away, cancel
+          its scheduled posts, and remove the IDs and links the platform
+          returned for its published posts. Posts already published stay on
+          the platform; delete them there if you want them gone.
         </li>
         <li>
-          When you delete your account, we immediately and irreversibly
-          destroy your sign-in details and the access tokens of your channels,
-          remove your posts and channels from the Service, and remove your
-          personal details from your user record. Any remaining records of
-          your content and media are permanently erased within 7 days when
-          you ask us to (see section 6).
+          <strong>If you remove our access in the platform&apos;s own
+          settings,</strong> we can no longer use that authorization. The
+          channel shows as needing to be reconnected the next time we contact
+          the platform: every day for YouTube and Google Business Profile, and
+          for the other platforms when a post is due or analytics are loaded.
+          A channel that stays disconnected for 13 days is erased
+          automatically with its data. To remove a channel and its data right
+          away, delete it in the app or follow our{' '}
+          <Link href="/data-deletion">Data Deletion</Link> page.
+        </li>
+        <li>
+          <strong>When you delete your account,</strong> we immediately cancel
+          the paid subscription of workspaces you own, ask the platforms to
+          cancel our access where supported, destroy your sign-in details and
+          the tokens and profiles of the channels in workspaces you own,
+          remove the platform IDs and links of their posts, cancel scheduled
+          posts, and remove your personal details from your user record. If
+          you are a member of a workspace someone else owns, you are removed
+          from it and its channels and posts stay with its owner. Your own
+          posts and uploaded media are removed from the Service right away and
+          permanently erased within 7 days when you ask us to (see section 6).
         </li>
         <li>
           We keep billing records as long as tax and accounting law requires,
@@ -352,7 +395,9 @@ export default function PrivacyPage() {
           the channel and choose <em>Delete</em>. You can also remove our
           access on the platform itself (for example Facebook Settings &gt;
           Business Integrations, TikTok Settings &gt; Security &gt; Manage app
-          permissions, or Google security settings).
+          permissions, Bluesky Settings &gt; App Passwords, or Google account
+          permissions). Removing access on the platform stops us from using
+          it; section 5 explains when the data we stored is then erased.
         </li>
         <li>
           <strong>Delete your account:</strong> go to{' '}
@@ -367,8 +412,7 @@ export default function PrivacyPage() {
         </li>
       </ul>
       <p>
-        Step-by-step instructions, including for people who signed in with
-        Facebook, are on our{' '}
+        Step-by-step instructions for every platform are on our{' '}
         <Link href="/data-deletion">Data Deletion</Link> page.
       </p>
 

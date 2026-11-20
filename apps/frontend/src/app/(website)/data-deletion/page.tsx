@@ -52,10 +52,15 @@ export default async function DataDeletionPage(props: {
         <li>Choose <strong>Delete</strong> and confirm.</li>
       </ol>
       <p>
-        The channel&apos;s access tokens and profile (name, username and
-        picture) are destroyed immediately, its scheduled posts are
-        cancelled, and Wrecking Social can no longer access
-        that account.
+        This stops Wrecking Social from using that connection. Right away, we
+        destroy the channel&apos;s access tokens or credentials and its
+        profile (name, username and picture), cancel its scheduled posts, and
+        remove the IDs and links the platform returned for its published
+        posts. For YouTube and Google Business Profile we also ask Google to
+        revoke our access (unless the same channel is still connected in
+        another Wrecking Social workspace). Statistics are only cached for up
+        to one hour, so there is nothing else to delete. Posts already
+        published stay on the platform.
       </p>
 
       <h2>Option 2: Delete your Wrecking Social account</h2>
@@ -65,12 +70,16 @@ export default async function DataDeletionPage(props: {
         <li>Click <strong>Delete Account</strong> and confirm.</li>
       </ol>
       <p>
-        Your sign-in details and the access tokens of all your channels are
-        destroyed immediately, and your posts, channels and workspaces are
-        removed from the Service. Workspaces you own are deleted together with
-        their channels, and you are removed from workspaces you were invited
-        to. The app tells you before you confirm if this affects other
-        members or an active subscription.
+        Right away, we cancel the paid subscription of the workspaces you own,
+        destroy your sign-in details, and delete the workspaces you own
+        together with their channels (the same steps as Option 1 for each
+        channel) and scheduled posts. Other members of those workspaces lose
+        access to them. If you are a member of a workspace someone else owns,
+        you are only removed from it; its channels and posts stay with its
+        owner. YouTube and Google Business Profile data is deleted as part of
+        this, without a separate request. Your own posts and uploaded media
+        are removed from the Service; to have them permanently erased, use
+        Option 3.
       </p>
 
       <h2>Option 3: Ask us to delete your data</h2>
@@ -81,35 +90,58 @@ export default async function DataDeletionPage(props: {
           {PRIVACY_EMAIL}
         </a>{' '}
         with the subject &quot;Data deletion request&quot;, from the email
-        address you used for Wrecking Social. Tell us which account or channels
-        the request is about. We will confirm we received it, may ask you to
-        verify that the account is yours, and will complete the deletion
-        within 7 days, then confirm by email.
+        address you used for Wrecking Social if you can. Tell us what you want
+        deleted: your whole account, a specific channel or specific records.
+        Never send us a password or a connection credential. We will confirm
+        we received it, may ask you to verify that the account is yours, and
+        will complete the deletion within 7 days, then confirm by email.
       </p>
 
       <h2>Remove our access from the platform itself</h2>
       <p>
-        You can also remove Wrecking Social&apos;s access directly in each
-        platform&apos;s settings. This stops our access right away. After that,
-        delete the channel in Wrecking Social (Option 1) or contact us to
-        delete the data we already hold.
+        You can also remove Wrecking Social&apos;s access in each
+        platform&apos;s own settings. Removing access there and deleting data
+        from Wrecking Social are different: removing access stops us from
+        using the connection, and the data we stored is then erased as
+        follows.
+      </p>
+      <ul>
+        <li>
+          <strong>YouTube and Google Business Profile:</strong> we check every
+          connected channel daily, and the data we stored for it is deleted
+          within 15 days of you revoking access. See the{' '}
+          <Link href="/privacy">Privacy Policy</Link> (section 4) for all
+          YouTube deletion timelines.
+        </li>
+        <li>
+          <strong>Other platforms:</strong> the channel shows as needing to be
+          reconnected the next time we contact the platform (when a post is
+          due or analytics are loaded) and is erased automatically 13 days
+          later.
+        </li>
+      </ul>
+      <p>
+        To have the data deleted right away, delete the channel in Wrecking
+        Social (Option 1) or email us (Option 3). Where to remove access on
+        each platform:
       </p>
       <ul>
         <li>
           <strong>Facebook and Instagram:</strong> on Facebook, go to{' '}
           <em>Settings &amp; privacy &gt; Settings &gt; Business
           integrations</em> (or <em>Apps and websites</em>), find Wrecking
-          Social and click <em>Remove</em>. Meta then tells us, and we
-          disconnect the account and destroy its access tokens automatically.
+          Social and click <em>Remove</em>. To also ask Meta to have your
+          data deleted, choose to send a deletion request when Facebook
+          offers it.
         </li>
         <li>
-          <strong>Google and YouTube:</strong> open your{' '}
+          <strong>YouTube and Google Business Profile:</strong> open your{' '}
           <a
             href="https://security.google.com/settings/security/permissions"
             target="_blank"
             rel="noreferrer"
           >
-            Google security settings
+            Google account permissions
           </a>
           , select Wrecking Social and choose <em>Remove access</em>.
         </li>
@@ -135,9 +167,9 @@ export default async function DataDeletionPage(props: {
           remove Wrecking Social.
         </li>
         <li>
-          <strong>X:</strong> go to{' '}
-          <em>Settings and privacy &gt; Security and account access &gt; Apps
-          and sessions &gt; Connected apps</em> and revoke Wrecking Social.
+          <strong>Bluesky:</strong> go to{' '}
+          <em>Settings &gt; Privacy and security &gt; App passwords</em> and
+          delete the app password you created for Wrecking Social.
         </li>
         <li>
           <strong>Pinterest:</strong> go to{' '}
@@ -151,7 +183,8 @@ export default async function DataDeletionPage(props: {
         Posts that were already published stay on the platforms where they
         were published. Delete them there if you want them gone. We keep
         billing records for as long as tax law requires, and we may keep a
-        record that a deletion request was completed.
+        record that a deletion request was completed. Server logs are kept
+        for up to 90 days.
       </p>
     </LegalPage>
   );

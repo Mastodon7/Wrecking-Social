@@ -418,7 +418,100 @@ export class IntegrationService {
   }
 
   async deleteChannel(org: string, id: string) {
+    const integration = await this._integrationRepository.getIntegrationById(
+      org,
+      id
+    );
+    if (integration && !integration.deletedAt) {
+      await this.revokeAccess(integration);
+    }
+
     return this._integrationRepository.deleteChannel(org, id);
+  }
+
+  // Before the stored tokens of a channel are destroyed, ask the platform to
+  // cancel the authorization too (YouTube requires it on disconnect). Skipped
+  // when the same platform account is still connected in another workspace,
+  // because revoking would cut that channel off as well. Never blocks the
+  // deletion
+  async revokeAccess(
+    integration: Pick<
+      Integration,
+      'id' | 'providerIdentifier' | 'internalId' | 'token' | 'refreshToken'
+    >
+  ) {
+    const provider = this._integrationManager.getSocialIntegration(
+      integration.providerIdentifier
+    );
+    if (!provider?.revokeAccess) {
+      return;
+    }
+
+    try {
+      if (
+        await this._integrationRepository.isConnectedElsewhere(
+          integration.providerIdentifier,
+          integration.internalId,
+          integration.id
+        )
+      ) {
+        return;
+      }
+
+      await provider.revokeAccess(
+        integration.token || '',
+        integration.refreshToken || ''
+      );
+    } catch (err) {
+      console.error(
+        `Could not revoke ${integration.providerIdentifier} access of channel ${integration.id}`,
+        (err as Error)?.message || err
+      );
+    }
+  }
+
+  async revokeAccessForOrganization(org: string) {
+    const channels =
+      await this._integrationRepository.getActiveChannelsWithTokens({
+        organizationId: org,
+      });
+    for (const channel of channels) {
+      await this.revokeAccess(channel);
+    }
+  }
+
+  // Refreshes the token of every connected channel whose platform requires
+  // it (YouTube, Google Business Profile), even one that publishes nothing.
+  // A refresh that fails because access was removed in the platform's own
+  // settings flags the channel, which starts the disconnected-channel cleanup
+  async checkDailyAuthorizations() {
+    const providers = this._integrationManager.dailyAuthorizationCheckProviders();
+    if (!providers.length) {
+      return;
+    }
+
+    const channels =
+      await this._integrationRepository.getActiveChannelsWithTokens({
+        providers,
+      });
+
+    for (const channel of channels) {
+      if (channel.refreshNeeded || channel.inBetweenSteps || !channel.refreshToken) {
+        continue;
+      }
+
+      try {
+        await this._refreshIntegrationService.refresh(
+          channel,
+          'Access to this channel was removed on the platform'
+        );
+      } catch (err) {
+        console.error(
+          `Daily authorization check failed for channel ${channel.id}`,
+          (err as Error)?.message || err
+        );
+      }
+    }
   }
 
   async disableIntegrations(org: string, totalChannels: number) {

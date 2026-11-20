@@ -115,7 +115,12 @@ export class PostActivity {
 
   @ActivityMethod()
   async deleteDisconnectedChannels() {
-    return this._postService.deleteChannelsDisconnectedFor(14);
+    // First notice channels whose access was removed in the platform's own
+    // settings (YouTube, Google Business Profile), then erase every channel
+    // that has been disconnected for 13 days. With the daily schedule that
+    // keeps the deletion within the 15 days the privacy policy promises
+    await this._integrationService.checkDailyAuthorizations();
+    return this._postService.deleteChannelsDisconnectedFor(13);
   }
 
   @ActivityMethod()

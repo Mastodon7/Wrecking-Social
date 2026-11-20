@@ -5,6 +5,7 @@ import {
   COMPANY_NAME,
   COMPANY_PHONE,
   COMPANY_PHONE_LINK,
+  SOURCE_CODE_URL,
 } from '@gitroom/frontend/components/website/website.company';
 
 export const WebsiteFooter = () => {
@@ -48,6 +49,14 @@ export const WebsiteFooter = () => {
           <Link href="/data-deletion" className="hover:text-white">
             Data Deletion
           </Link>
+          <a
+            href={SOURCE_CODE_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="hover:text-white"
+          >
+            Source code (AGPL)
+          </a>
         </nav>
         <nav className="flex flex-col gap-[10px]" aria-label="Product">
           <div className="text-white font-[600]">Product</div>

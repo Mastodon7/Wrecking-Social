@@ -111,7 +111,8 @@ export class PostsService {
   // (access removed on the platform, token expired) or were left half
   // connected are removed with their data, so platform data is never kept
   // for an account we can no longer reach. The privacy policy promises this
-  // within 15 days, so keep `days` plus the daily schedule under that.
+  // within 15 days of losing access, so keep `days` plus the daily schedule
+  // (and the daily authorization check that flags the channel) under that.
   async deleteChannelsDisconnectedFor(days: number) {
     const channels =
       await this._integrationService.getChannelsDisconnectedBefore(

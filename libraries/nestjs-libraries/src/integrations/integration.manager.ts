@@ -261,4 +261,10 @@ export class IntegrationManager {
   getSocialIntegration(integration: string): SocialProvider {
     return socialIntegrationList.find((i) => i.identifier === integration)!;
   }
+
+  dailyAuthorizationCheckProviders() {
+    return socialIntegrationList
+      .filter((p) => p.dailyAuthorizationCheck)
+      .map((p) => p.identifier);
+  }
 }

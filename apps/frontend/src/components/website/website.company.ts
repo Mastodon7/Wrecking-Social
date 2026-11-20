@@ -13,7 +13,10 @@ export const COMPANY_ADDRESS_LINES = [
   'Chicago, Illinois 60624',
   'United States',
 ];
-export const LEGAL_EFFECTIVE_DATE = 'November 18, 2026';
+export const LEGAL_EFFECTIVE_DATE = 'November 19, 2026';
+// Complete source code of the version we run (AGPL-3.0 section 13). The
+// image is built from this repository's main branch
+export const SOURCE_CODE_URL = 'https://github.com/Mastodon7/Wrecking-Social';
 
 // The address of the public website, the same FRONTEND_URL the app runs on
 export const websiteUrl = () =>

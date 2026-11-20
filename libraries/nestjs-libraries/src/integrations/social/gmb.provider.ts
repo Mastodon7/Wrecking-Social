@@ -1,3 +1,4 @@
+import { revokeGoogleToken } from '@gitroom/nestjs-libraries/integrations/social/google.revoke';
 import {
   AnalyticsData,
   AuthTokenDetails,
@@ -42,6 +43,12 @@ const clientAndGmb = () => {
 export class GmbProvider extends SocialAbstract implements SocialProvider {
   override maxConcurrentJob = 3;
   identifier = 'gmb';
+  dailyAuthorizationCheck = true;
+
+  async revokeAccess(accessToken: string, refreshToken: string) {
+    await revokeGoogleToken(refreshToken || accessToken);
+  }
+
   name = 'Google My Business';
   isBetweenSteps = true;
   scopes = [
