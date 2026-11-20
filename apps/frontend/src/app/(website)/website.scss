@@ -92,3 +92,51 @@ body {
   background: var(--ws-ink-soft);
   color: #fff;
 }
+
+/* Big, heavy, tightly spaced headlines (hero, section titles) */
+.ws-headline {
+  font-family: var(--font-ws-display), var(--font-ws-body), sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.045em;
+  line-height: 1.04;
+}
+
+/* "Post Everywhere!" logo strip: two identical lists slide left forever */
+.ws-marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+
+.ws-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: ws-marquee 40s linear infinite;
+}
+
+.ws-marquee:hover .ws-marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes ws-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ws-marquee-track {
+    animation: none;
+    flex-wrap: wrap;
+    width: auto;
+  }
+  .ws-marquee-track ul[aria-hidden='true'] {
+    display: none;
+  }
+  .ws-marquee-track ul {
+    flex-wrap: wrap;
+  }
+}

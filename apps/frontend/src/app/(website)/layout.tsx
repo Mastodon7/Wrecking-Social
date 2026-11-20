@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 import { Metadata } from 'next';
 import clsx from 'clsx';
 import {
-  bricolageGrotesque,
+  interDisplay,
   dmSans,
 } from '@gitroom/frontend/fonts/wrecking-social/wrecking.social.font';
 import { WebsiteHeader } from '@gitroom/frontend/components/website/website.header';
@@ -34,7 +34,7 @@ export default function WebsiteLayout({ children }: { children: ReactNode }) {
     <html lang="en">
       <body
         className={clsx(
-          bricolageGrotesque.variable,
+          interDisplay.variable,
           dmSans.variable,
           'min-h-screen flex flex-col'
         )}
