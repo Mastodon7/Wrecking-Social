@@ -11,20 +11,35 @@ export const metadata: Metadata = {
 
 // Only platforms Wrecking Social has apps for. Add one here once its app is
 // approved and set up: reviewers treat listing unavailable platforms as
-// misleading, and Reddit needs written approval before it is advertised
+// misleading, and Reddit needs written approval before it is advertised.
+// LinkedIn covers both profiles and Company Pages
 const platforms = [
-  'Facebook Pages',
-  'Instagram',
-  'Threads',
-  'LinkedIn',
-  'LinkedIn Pages',
-  'TikTok',
-  'YouTube',
-  'Pinterest',
-  'Google Business Profile',
-  'Bluesky',
-  'Mastodon',
+  { name: 'Facebook', icon: 'facebook' },
+  { name: 'Instagram', icon: 'instagram' },
+  { name: 'Threads', icon: 'threads' },
+  { name: 'LinkedIn', icon: 'linkedin' },
+  { name: 'TikTok', icon: 'tiktok' },
+  { name: 'YouTube', icon: 'youtube' },
+  { name: 'Pinterest', icon: 'pinterest' },
+  { name: 'Google Business Profile', icon: 'gmb' },
+  { name: 'Bluesky', icon: 'bluesky' },
+  { name: 'Mastodon', icon: 'mastodon' },
 ];
+
+const PlatformChip = ({ name, icon }: { name: string; icon: string }) => (
+  <li className="flex items-center gap-[10px] shrink-0 ps-[8px] pe-[16px] py-[8px] rounded-full bg-ws-inkSoft border border-ws-line">
+    <img
+      src={`/icons/platforms/${icon}.png`}
+      alt=""
+      width={32}
+      height={32}
+      className="w-[32px] h-[32px] rounded-full"
+    />
+    <span className="text-[16px] font-[600] text-white whitespace-nowrap">
+      {name}
+    </span>
+  </li>
+);
 
 const features = [
   {
@@ -84,61 +99,138 @@ export default function HomePage() {
   return (
     <>
       <section className="relative overflow-hidden">
-        <div className="absolute -top-[200px] start-1/2 -translate-x-1/2 w-[900px] h-[500px] rounded-full bg-ws-greenDeep blur-[140px] opacity-40" />
-        <div className="relative max-w-[1200px] mx-auto px-[16px] pt-[64px] pb-[72px] flex flex-col items-center text-center gap-[28px]">
-          <img
-            src="/wrecking-social-wordmark.png"
-            alt="Wrecking Social: Schedule It. Create It. Crush It."
-            width={800}
-            height={166}
-            className="w-full max-w-[640px] h-auto"
-          />
-          <h1 className="ws-display text-[36px] md:text-[54px] leading-[1.08] font-[800] text-white max-w-[900px]">
-            Plan, create and publish your social media from one place.
-          </h1>
-          <p className="text-[18px] md:text-[20px] text-ws-text max-w-[720px]">
-            Wrecking Social is a social media publishing platform for
-            businesses, creators and agencies. Connect your accounts, build
-            your posts, schedule them on a shared calendar and let them go out
-            on time, on every channel.
-          </p>
-          <div className="flex flex-wrap justify-center gap-[12px]">
-            <Link
-              href="/auth"
-              className="text-[16px] font-[700] bg-ws-green text-ws-ink px-[22px] py-[13px] rounded-[10px] hover:bg-ws-greenHover"
+        <div className="absolute -top-[220px] -start-[200px] w-[700px] h-[500px] rounded-full bg-ws-greenDeep blur-[140px] opacity-40" />
+        <div className="relative max-w-[1200px] mx-auto px-[16px] pt-[48px] md:pt-[72px] pb-[56px] grid gap-[40px] md:grid-cols-[1.15fr_1fr] items-center">
+          <div className="flex flex-col gap-[24px]">
+            <p className="text-[15px] md:text-[16px] font-[600] text-ws-muted">
+              Social media publishing · For businesses, creators and agencies
+            </p>
+            <h1 className="ws-headline text-[44px] sm:text-[56px] lg:text-[72px] text-white">
+              Plan, create and publish
+              <span className="block text-ws-green">
+                your social media from one place.
+              </span>
+            </h1>
+            <p className="text-[18px] md:text-[20px] leading-[1.6] text-ws-text max-w-[560px]">
+              Wrecking Social lets you connect your accounts, build your posts,
+              schedule them on a shared calendar and let them go out on time,
+              on every channel.
+            </p>
+            <div className="flex flex-wrap items-center gap-[20px]">
+              <Link
+                href="/auth"
+                className="text-[17px] font-[700] bg-ws-green text-ws-ink px-[26px] py-[15px] rounded-[10px] hover:bg-ws-greenHover"
+              >
+                Get started →
+              </Link>
+              <Link
+                href="/#how-it-works"
+                className="text-[17px] font-[700] text-white hover:text-ws-green"
+              >
+                See how it works ↓
+              </Link>
+            </div>
+          </div>
+
+          <div className="relative mx-auto w-full max-w-[460px] md:max-w-none">
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 500 600"
+              className="absolute -start-[22%] -top-[4%] w-[144%] h-auto"
+              fill="none"
             >
-              Get started
-            </Link>
-            <Link
-              href="/#how-it-works"
-              className="text-[16px] font-[600] border border-ws-green/50 text-white px-[22px] py-[13px] rounded-[10px] hover:border-ws-green"
+              <path
+                d="M-10 560 C 90 600, 120 380, 230 330 S 430 330, 510 40"
+                stroke="var(--ws-green)"
+                strokeWidth="46"
+                strokeLinecap="round"
+                opacity="0.9"
+              />
+            </svg>
+            <img
+              src="/website/hero-person.jpg"
+              alt="A smiling woman working on a laptop"
+              width={1000}
+              height={1457}
+              fetchPriority="high"
+              className="relative w-full h-[440px] md:h-[560px] object-cover object-[50%_30%] rounded-[28px] border border-ws-line shadow-[0_30px_80px_rgba(0,0,0,0.45)]"
+            />
+            <div
+              aria-hidden="true"
+              className="absolute top-[28px] -start-[12px] md:-start-[44px] flex items-center gap-[10px] bg-white text-ws-ink rounded-[14px] px-[14px] py-[10px] shadow-[0_12px_30px_rgba(0,0,0,0.35)]"
             >
-              See how it works
-            </Link>
+              <span className="w-[34px] h-[34px] rounded-full bg-[#ffe1e6] text-[#e8284f] flex items-center justify-center text-[18px]">
+                ♥
+              </span>
+              <span className="flex flex-col leading-[1.15]">
+                <strong className="ws-headline text-[20px]">+2.4k</strong>
+                <span className="text-[13px] text-[#4a5a4e]">likes this week</span>
+              </span>
+            </div>
+            <div
+              aria-hidden="true"
+              className="absolute bottom-[96px] -end-[8px] md:-end-[28px] bg-white text-ws-ink rounded-[14px] px-[14px] py-[12px] shadow-[0_12px_30px_rgba(0,0,0,0.35)] w-[190px]"
+            >
+              <span className="text-[13px] text-[#4a5a4e]">Reach</span>
+              <div className="flex items-end justify-between">
+                <strong className="ws-headline text-[22px]">18.6k</strong>
+                <span className="text-[13px] font-[700] text-ws-greenDeep">▲ 38%</span>
+              </div>
+              <div className="mt-[8px] flex items-end gap-[5px] h-[34px]">
+                {[40, 55, 35, 65, 50, 80, 100].map((h, i) => (
+                  <span
+                    key={i}
+                    style={{ height: `${h}%` }}
+                    className="flex-1 rounded-[3px] bg-ws-green"
+                  />
+                ))}
+              </div>
+            </div>
+            <div
+              aria-hidden="true"
+              className="absolute -bottom-[18px] start-[24px] flex items-center gap-[10px] bg-ws-green text-ws-ink rounded-[14px] px-[16px] py-[11px] shadow-[0_12px_30px_rgba(0,0,0,0.35)]"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                className="w-[20px] h-[20px]"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+              >
+                <rect x="3" y="5" width="18" height="16" rx="3" />
+                <path d="M3 10h18M8 3v4M16 3v4" />
+              </svg>
+              <span className="text-[15px] font-[700]">12 posts scheduled</span>
+            </div>
           </div>
         </div>
       </section>
 
       <section id="platforms" className="border-y border-ws-line bg-ws-deep">
-        <div className="max-w-[1200px] mx-auto px-[16px] py-[48px] flex flex-col gap-[20px]">
-          <h2 className="ws-display text-[26px] md:text-[32px] font-[700] text-white text-center">
-            Publish to the platforms your audience uses
+        <div className="max-w-[1200px] mx-auto px-[16px] py-[36px] flex flex-col md:flex-row md:items-center gap-[20px] md:gap-[32px]">
+          <h2 className="ws-headline text-[30px] md:text-[34px] text-white shrink-0 md:w-[200px]">
+            Post <span className="text-ws-green">Everywhere!</span>
           </h2>
-          <ul className="flex flex-wrap justify-center gap-[10px]">
-            {platforms.map((p) => (
-              <li
-                key={p}
-                className="px-[14px] py-[8px] rounded-full border border-ws-line bg-ws-inkSoft text-[15px] text-ws-light"
-              >
-                {p}
-              </li>
-            ))}
-          </ul>
-          <p className="text-center text-[14px] text-ws-muted">
-            Platform names are trademarks of their owners. Wrecking Social is
-            not affiliated with or endorsed by them.
-          </p>
+          <div className="ws-marquee flex-1 min-w-0">
+            <div className="ws-marquee-track">
+              <ul className="flex gap-[14px] pe-[14px]" aria-label="Platforms you can publish to">
+                {platforms.map((p) => (
+                  <PlatformChip key={p.icon} {...p} />
+                ))}
+              </ul>
+              <ul className="flex gap-[14px] pe-[14px]" aria-hidden="true">
+                {platforms.map((p) => (
+                  <PlatformChip key={p.icon} {...p} />
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
+        <p className="max-w-[1200px] mx-auto px-[16px] pb-[20px] text-center md:text-start text-[13px] text-ws-muted">
+          Platform names and logos are trademarks of their owners. Wrecking
+          Social is not affiliated with or endorsed by them.
+        </p>
       </section>
 
       <section id="features" className="max-w-[1200px] mx-auto px-[16px] py-[72px]">
