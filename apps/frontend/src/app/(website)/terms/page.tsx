@@ -8,6 +8,7 @@ import {
   COMPANY_PHONE,
   COMPANY_PHONE_LINK,
   LEGAL_EFFECTIVE_DATE,
+  SOURCE_CODE_URL,
 } from '@gitroom/frontend/components/website/website.company';
 
 export const metadata: Metadata = {
@@ -70,12 +71,27 @@ export default function TermsPage() {
         , the{' '}
         <a href="https://www.linkedin.com/legal/user-agreement" target="_blank" rel="noreferrer">
           LinkedIn User Agreement
+        </a>
+        , the{' '}
+        <a href="https://policy.pinterest.com/en/terms-of-service" target="_blank" rel="noreferrer">
+          Pinterest Terms of Service
         </a>{' '}
         and the{' '}
-        <a href="https://x.com/en/tos" target="_blank" rel="noreferrer">
-          X Terms of Service
+        <a href="https://bsky.social/about/support/tos" target="_blank" rel="noreferrer">
+          Bluesky Terms of Service
         </a>
         .
+      </p>
+      <p>
+        Connecting a channel does not give you access to features that your
+        account type or the platform does not support, and a platform may
+        limit or withdraw the access it gives us. When a connection or
+        permission ends, Wrecking Social can no longer use it to publish or to
+        retrieve information. See our{' '}
+        <Link href="/data-deletion">Data Deletion</Link> page for how to
+        disconnect a channel or delete your Wrecking Social data. Deleting
+        that data does not remove posts already published to a connected
+        platform.
       </p>
       <p>
         <strong>YouTube:</strong> Wrecking Social uses YouTube API Services. By
@@ -155,6 +171,15 @@ export default function TermsPage() {
         <li>You are responsible for taxes that apply to your purchase.</li>
       </ul>
 
+      <p>
+        Canceling a paid plan and deleting your Wrecking Social account are
+        different actions. Canceling stops the next renewal and keeps your
+        account. Deleting your account also cancels the subscription of the
+        workspaces you own and removes their channels and scheduled posts;
+        see our <Link href="/data-deletion">Data Deletion</Link> page before
+        you delete it.
+      </p>
+
       <h2>8. Ending the agreement</h2>
       <p>
         You can stop using the Service and delete your account at any time
@@ -180,7 +205,11 @@ export default function TermsPage() {
         Wrecking Social is built on Postiz, open-source software licensed
         under the GNU Affero General Public License version 3 (AGPL-3.0). You
         can get the complete source code of the version of the software we
-        run, under that license, by emailing{' '}
+        run, under that license, free of charge at{' '}
+        <a href={SOURCE_CODE_URL} target="_blank" rel="noreferrer">
+          {SOURCE_CODE_URL.replace('https://', '')}
+        </a>{' '}
+        (also linked at the bottom of every page), or by emailing{' '}
         <a href={`mailto:${COMPANY_EMAIL}`}>{COMPANY_EMAIL}</a>. Nothing in
         these Terms limits your rights under that license.
       </p>

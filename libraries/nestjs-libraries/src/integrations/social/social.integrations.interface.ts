@@ -192,6 +192,15 @@ export interface SocialProvider
   convertToJPEG?: boolean;
   stripLinks?: () => boolean;
   refreshCron?: boolean;
+  // Cancels the authorization on the platform when the channel is deleted
+  // (in the app, by account deletion or by the disconnected-channel cleanup).
+  // Platforms such as YouTube require it. Best effort: an error is logged and
+  // never blocks the deletion
+  revokeAccess?(accessToken: string, refreshToken: string): Promise<void>;
+  // Checked once a day, even when the channel publishes nothing, so access
+  // removed in the platform's own settings is noticed and starts the
+  // disconnected-channel cleanup (YouTube requires deletion within 30 days)
+  dailyAuthorizationCheck?: boolean;
   refreshErrorMessage?(err: any): string | undefined;
   dto?: any;
   maxLength: (additionalSettings?: any, settings?: any) => number;

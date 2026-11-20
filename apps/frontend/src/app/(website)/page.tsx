@@ -23,7 +23,6 @@ const platforms = [
   { name: 'Pinterest', icon: 'pinterest' },
   { name: 'Google Business Profile', icon: 'gmb' },
   { name: 'Bluesky', icon: 'bluesky' },
-  { name: 'Mastodon', icon: 'mastodon' },
 ];
 
 const PlatformChip = ({ name, icon }: { name: string; icon: string }) => (

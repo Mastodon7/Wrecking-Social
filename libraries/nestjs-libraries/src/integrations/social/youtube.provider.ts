@@ -9,6 +9,7 @@ import {
 import { Integration } from '@prisma/client';
 import { makeSecureId } from '@gitroom/nestjs-libraries/services/make.secure.id';
 import { google } from 'googleapis';
+import { revokeGoogleToken } from '@gitroom/nestjs-libraries/integrations/social/google.revoke';
 import { OAuth2Client } from 'google-auth-library/build/src/auth/oauth2client';
 import { YoutubeSettingsDto } from '@gitroom/nestjs-libraries/dtos/posts/providers-settings/youtube.settings.dto';
 import {
@@ -65,6 +66,12 @@ const clientAndYoutube = () => {
 export class YoutubeProvider extends SocialAbstract implements SocialProvider {
   override maxConcurrentJob = 200; // YouTube has strict upload quotas
   identifier = 'youtube';
+  dailyAuthorizationCheck = true;
+
+  async revokeAccess(accessToken: string, refreshToken: string) {
+    await revokeGoogleToken(refreshToken || accessToken);
+  }
+
   name = 'YouTube';
   isBetweenSteps = true;
   dto = YoutubeSettingsDto;

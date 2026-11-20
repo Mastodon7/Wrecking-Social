@@ -26,9 +26,14 @@ services:
       REDIS_URL: redis://redis:6379
       TEMPORAL_ADDRESS: temporal:7233
       IS_GENERAL: 'true'
-      # Starts the background jobs: retry posts that missed their time, and
-      # remove channels that have needed a reconnect for 14 days
+      # Starts the background jobs: retry posts that missed their time, check
+      # YouTube / Google Business access daily, and remove channels that have
+      # needed a reconnect for 13 days (gone within 15 days)
       RUN_CRON: 'true'
+      # Platforms not offered on the add-channel screen. Keep it in step with
+      # the homepage and the privacy policy: only platforms we have an app for.
+      # Remove one from this list once its app is set up and approved
+      HIDDEN_PROVIDERS: ${HIDDEN_PROVIDERS:-x,reddit,mastodon,discord,slack,telegram,dribbble,kick,twitch,lemmy,wrapcast,nostr,vk,medium,devto,hashnode,wordpress,listmonk,moltbook,whop,skool,mewe,tumblr}
       DISABLE_REGISTRATION: ${DISABLE_REGISTRATION:-false}
       STORAGE_PROVIDER: local
       UPLOAD_DIRECTORY: /uploads

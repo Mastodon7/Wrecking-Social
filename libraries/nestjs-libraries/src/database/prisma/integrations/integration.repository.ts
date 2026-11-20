@@ -908,6 +908,45 @@ export class IntegrationRepository {
     });
   }
 
+  // Connected channels of the given providers with their tokens, for the
+  // daily authorization check and for revoking access before a deletion
+  async getActiveChannelsWithTokens(where: {
+    providers?: string[];
+    organizationId?: string;
+  }) {
+    const channels = await this._integration.model.integration.findMany({
+      where: {
+        deletedAt: null,
+        ...(where.providers
+          ? { providerIdentifier: { in: where.providers } }
+          : {}),
+        ...(where.organizationId
+          ? { organizationId: where.organizationId }
+          : {}),
+      },
+    });
+
+    return Promise.all(channels.map((c) => this.decryptTokens(c)));
+  }
+
+  // Another connected channel (in any workspace) for the same platform
+  // account: its authorization must not be revoked when this one is deleted
+  async isConnectedElsewhere(
+    providerIdentifier: string,
+    internalId: string,
+    excludeId: string
+  ) {
+    return !!(await this._integration.model.integration.findFirst({
+      where: {
+        id: { not: excludeId },
+        providerIdentifier,
+        internalId,
+        deletedAt: null,
+      },
+      select: { id: true },
+    }));
+  }
+
   // Channels that have needed a reconnect (or were left half connected)
   // since before the given date: nothing has touched them since they were
   // flagged, so updatedAt is when that happened
@@ -950,6 +989,8 @@ export class IntegrationRepository {
     // is how the row is found again. The stored refresh token is kept by
     // createOrUpdateIntegration when the platform sends none, so it is
     // cleared instead of hashed
+    await this.removePlatformPostIds({ integrationId: id, organizationId: org });
+
     return this._integration.model.integration.update({
       select: {
         id: true,
@@ -973,9 +1014,30 @@ export class IntegrationRepository {
     });
   }
 
+  // The IDs and links the platform returned for published posts are platform
+  // data (YouTube requires deleting them with the channel). The post itself
+  // stays, it is the user's own content
+  private removePlatformPostIds(where: {
+    organizationId: string;
+    integrationId?: string;
+  }) {
+    return this._posts.model.post.updateMany({
+      where: {
+        ...where,
+        OR: [{ releaseId: { not: null } }, { releaseURL: { not: null } }],
+      },
+      data: {
+        releaseId: null,
+        releaseURL: null,
+      },
+    });
+  }
+
   async deleteIntegrationsForAccount(org: string) {
     const hash = (value: string) =>
       createHash('md5').update(value).digest('hex');
+
+    await this.removePlatformPostIds({ organizationId: org });
 
     await this._posts.model.post.updateMany({
       where: {
