@@ -10,7 +10,6 @@ import { PaymentProviderManager } from '@gitroom/nestjs-libraries/services/payme
 import { RevenueCatProvider } from '@gitroom/nestjs-libraries/services/payment/providers/revenuecat.provider';
 import { AnalyticsController } from '@gitroom/backend/api/routes/analytics.controller';
 import { InsightsController } from '@gitroom/backend/api/routes/insights.controller';
-import { InboxToolsController } from '@gitroom/backend/api/routes/inbox-tools.controller';
 import { PoliciesGuard } from '@gitroom/backend/services/auth/permissions/permissions.guard';
 import { PermissionsService } from '@gitroom/backend/services/auth/permissions/permissions.service';
 import { IntegrationsController } from '@gitroom/backend/api/routes/integrations.controller';
@@ -36,6 +35,7 @@ import { TrackService } from '@gitroom/nestjs-libraries/track/track.service';
 import { ShortLinkService } from '@gitroom/nestjs-libraries/short-linking/short.link.service';
 import { WebhookController } from '@gitroom/backend/api/routes/webhooks.controller';
 import { SignatureController } from '@gitroom/backend/api/routes/signature.controller';
+import { InboxToolsController } from '@gitroom/backend/api/routes/inbox-tools.controller';
 import { AutopostController } from '@gitroom/backend/api/routes/autopost.controller';
 import { SetsController } from '@gitroom/backend/api/routes/sets.controller';
 import { ThirdPartyController } from '@gitroom/backend/api/routes/third-party.controller';
@@ -64,7 +64,6 @@ const authenticatedController = [
   UsersController,
   AnalyticsController,
   InsightsController,
-  InboxToolsController,
   IntegrationsController,
   SettingsController,
   PostsController,
@@ -75,6 +74,7 @@ const authenticatedController = [
   CopilotController,
   WebhookController,
   SignatureController,
+  InboxToolsController,
   AutopostController,
   SetsController,
   ThirdPartyController,
