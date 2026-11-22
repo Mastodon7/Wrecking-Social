@@ -5,6 +5,8 @@ import clsx from 'clsx';
 import dayjs from 'dayjs';
 import { useCallback, useState } from 'react';
 import { SelectCustomer } from '@gitroom/frontend/components/launches/select.customer';
+import { ApprovalsButton } from '@gitroom/frontend/components/approvals/approvals';
+import { usePostActions } from '@gitroom/frontend/components/launches/calendar';
 import { SelectChannels } from '@gitroom/frontend/components/launches/select.channels';
 import { useT } from '@gitroom/react/translation/get.transation.service.client';
 import i18next from 'i18next';
@@ -45,6 +47,7 @@ function getDateRange(
 
 export const Filters = () => {
   const calendar = useCalendar();
+  const { editPost } = usePostActions();
   const t = useT();
   const [filtersOpen, setFiltersOpen] = useState(false);
 
@@ -448,6 +451,7 @@ export const Filters = () => {
         />
         <SelectChannels />
       </div>
+      <ApprovalsButton openPost={(post) => editPost(post)()} />
       {calendar.integrations.length > 1 && (
         <div
           onClick={() => setFiltersOpen(true)}

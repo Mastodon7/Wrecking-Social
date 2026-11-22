@@ -34,6 +34,8 @@ import {
   ResolveCommentDto,
 } from '@gitroom/nestjs-libraries/dtos/comments/add.comment.dto';
 import { RealIP } from 'nestjs-real-ip';
+import { ApprovalsService } from '@gitroom/nestjs-libraries/database/prisma/approvals/approvals.service';
+import { roleIn } from '@gitroom/backend/api/routes/approvals.controller';
 import { ReplyPlatformCommentDto } from '@gitroom/nestjs-libraries/dtos/inbox/reply.platform.comment.dto';
 
 @ApiTags('Posts')
@@ -42,7 +44,8 @@ export class PostsController {
   constructor(
     private _postsService: PostsService,
     private _agentGraphService: AgentGraphService,
-    private _shortLinkService: ShortLinkService
+    private _shortLinkService: ShortLinkService,
+    private _approvalsService: ApprovalsService
   ) {}
 
   @Get('/:id/statistics')
@@ -224,8 +227,26 @@ export class PostsController {
   @CheckPolicies([AuthorizationActions.Create, Sections.POSTS_PER_MONTH])
   async createPost(
     @GetOrgFromRequest() org: Organization,
+    @GetUserFromRequest() user: User,
     @Body() rawBody: any
   ) {
+    // With approvals on, members can only save drafts and submit them;
+    // an admin scheduling the post is the approval
+    const role = roleIn(org);
+    if (
+      role === 'USER' &&
+      rawBody?.type !== 'draft' &&
+      (await this._approvalsService.isRequired(org.id))
+    ) {
+      throw new HttpException(
+        {
+          message:
+            'Posts need an admin\'s approval before they are scheduled. Use "Submit for approval".',
+        },
+        403
+      );
+    }
+
     // Server-side validation — never trust the client to have validated.
     const validation = await this._postsService.validatePosts(
       org.id,
@@ -264,7 +285,18 @@ export class PostsController {
     }
 
     const body = await this._postsService.mapTypeToPost(rawBody, org.id);
-    return this._postsService.createPost(org.id, body, 'WEB');
+    const created = await this._postsService.createPost(org.id, body, 'WEB');
+
+    const groups = (rawBody?.posts || [])
+      .map((p: any) => p?.group)
+      .filter((g: any) => typeof g === 'string' && g);
+    if (rawBody?.type === 'draft' && rawBody?.submitForApproval) {
+      await this._approvalsService.submit(org.id, user, groups);
+    } else if (rawBody?.type !== 'draft' && role !== 'USER') {
+      await this._approvalsService.approve(org.id, user.id, groups);
+    }
+
+    return created;
   }
 
   @Post('/generator/draft')

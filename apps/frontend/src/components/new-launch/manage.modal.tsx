@@ -33,6 +33,10 @@ import {
 import { useShallow } from 'zustand/react/shallow';
 import { RepeatComponent } from '@gitroom/frontend/components/launches/repeat.component';
 import {
+  ApprovalBanner,
+  useApprovalSetting,
+} from '@gitroom/frontend/components/approvals/approvals';
+import {
   Check,
   TagsComponent,
 } from '@gitroom/frontend/components/launches/tags.component';
@@ -153,6 +157,15 @@ export const ManageModal: FC<AddEditModalProps> = (props) => {
 
   // the date sheet applies its changes only on save
   const [dateDraft, setDateDraft] = useState(date);
+
+  // with approvals on, members submit posts instead of scheduling them
+  const { data: approvalSetting } = useApprovalSetting();
+  const needsApproval =
+    !!approvalSetting?.required &&
+    approvalSetting.canApprove === false &&
+    !dummy &&
+    !addEditSets;
+  const submitForApprovalRef = useRef(false);
 
   // the channels the post already has, each with its own post, in the order
   // of the channels at the top of the editor
@@ -874,7 +887,9 @@ export const ManageModal: FC<AddEditModalProps> = (props) => {
         shortLink,
         date: date.utc().format('YYYY-MM-DDTHH:mm:ss'),
         posts,
+        ...(submitForApprovalRef.current ? { submitForApproval: true } : {}),
       };
+      submitForApprovalRef.current = false;
 
       if (dummy) {
         modal.openModal({
@@ -970,6 +985,11 @@ export const ManageModal: FC<AddEditModalProps> = (props) => {
     ]
   );
 
+  const submitForApproval = useCallback(async () => {
+    submitForApprovalRef.current = true;
+    await schedule('draft')();
+  }, [schedule]);
+
   const scheduleLabel = dummy
     ? t('create_output', 'Create output')
     : !existingData?.integration
@@ -978,7 +998,20 @@ export const ManageModal: FC<AddEditModalProps> = (props) => {
     ? t('schedule', 'Schedule')
     : t('update', 'Update');
 
-  const mobileActions: MobileTopBarAction[] = addEditSets
+  const mobileActions: MobileTopBarAction[] = needsApproval
+    ? [
+        {
+          label: t('submit_for_approval', 'Submit for approval'),
+          variant: 'primary',
+          onClick: submitForApproval,
+        },
+        {
+          label: t('save_as_draft', 'Save as Draft'),
+          variant: 'tertiary',
+          onClick: schedule('draft'),
+        },
+      ]
+    : addEditSets
     ? [
         {
           label: t('save_set', 'Save Set'),
@@ -1081,6 +1114,7 @@ export const ManageModal: FC<AddEditModalProps> = (props) => {
                 size="sm"
               />
             </div>
+            {!dummy && <ApprovalBanner group={existingData?.group} />}
             <div className="flex-1 flex flex-col gap-[16px]">
               <div
                 className={clsx(
@@ -1317,7 +1351,18 @@ export const ManageModal: FC<AddEditModalProps> = (props) => {
                 Save Set
               </button>
             )}
-            {!addEditSets && (
+            {needsApproval && (
+              <button
+                disabled={
+                  selectedIntegrations.length === 0 || loading || locked
+                }
+                onClick={submitForApproval}
+                className="text-white text-[15px] font-[600] min-w-[180px] btnSub disabled:cursor-not-allowed disabled:opacity-80 outline-none flex justify-center items-center h-[44px] rounded-[8px] bg-[#086b31] px-[20px]"
+              >
+                {t('submit_for_approval', 'Submit for approval')}
+              </button>
+            )}
+            {!addEditSets && !needsApproval && (
               <div ref={postNowRef} className="group cursor-pointer relative">
                 <button
                   disabled={

@@ -25,6 +25,8 @@ model Organization {
   Comments            Comments[]
   credits             Credits[]
   clippings           Clipping[]
+  postApprovals       PostApproval[]
+  approvalSetting     ApprovalSetting?
   customers           Customer[]
   errors              Errors[]
   github              GitHub[]
@@ -50,6 +52,33 @@ model Organization {
   @@index([streakSince])
   @@index([paymentId])
   @@index([deletedAt])
+}
+
+// Approval before publishing: whether members' posts need an admin's OK
+model ApprovalSetting {
+  organizationId String       @id
+  required       Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+}
+
+// One post group (the post on its channels) waiting for, or given, approval.
+// status: PENDING, CHANGES_REQUESTED or APPROVED
+model PostApproval {
+  id             String       @id @default(cuid())
+  organizationId String
+  group          String
+  status         String       @default("PENDING")
+  submittedById  String
+  decidedById    String?
+  note           String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, group])
+  @@index([organizationId, status])
 }
 
 model Tags {
