@@ -16,6 +16,7 @@ import { AuthTokenDetails } from '@gitroom/nestjs-libraries/integrations/social/
 import { RefreshIntegrationService } from '@gitroom/nestjs-libraries/integrations/refresh.integration.service';
 import { timer } from '@gitroom/helpers/utils/timer';
 import { IntegrationService } from '@gitroom/nestjs-libraries/database/prisma/integrations/integration.service';
+import { InsightsService } from '@gitroom/nestjs-libraries/database/prisma/insights/insights.service';
 import { WebhooksService } from '@gitroom/nestjs-libraries/database/prisma/webhooks/webhooks.service';
 import { getSsrfSafeDispatcher } from '@gitroom/nestjs-libraries/dtos/webhooks/ssrf.safe.dispatcher';
 import { TypedSearchAttributes } from '@temporalio/common';
@@ -105,7 +106,8 @@ export class PostActivity {
     private _refreshIntegrationService: RefreshIntegrationService,
     private _webhookService: WebhooksService,
     private _temporalService: TemporalService,
-    private _subscriptionService: SubscriptionService
+    private _subscriptionService: SubscriptionService,
+    private _insightsService: InsightsService
   ) {}
 
   @ActivityMethod()
@@ -121,6 +123,12 @@ export class PostActivity {
     // keeps the deletion within the 15 days the privacy policy promises
     await this._integrationService.checkDailyAuthorizations();
     return this._postService.deleteChannelsDisconnectedFor(13);
+  }
+
+  // Saves today's engagement numbers of recent posts for Insights
+  @ActivityMethod()
+  async collectPostMetrics() {
+    return this._insightsService.collectMetrics();
   }
 
   @ActivityMethod()

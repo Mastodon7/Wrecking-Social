@@ -14,6 +14,7 @@ export * from './autopost.workflow';
 export * from './digest.email.workflow';
 export * from './missing.post.workflow';
 export * from './disconnected.channels.workflow';
+export * from './post.metrics.workflow';
 export * from './send.email.workflow';
 export * from './refresh.token.workflow';
 export * from './streak.workflow';

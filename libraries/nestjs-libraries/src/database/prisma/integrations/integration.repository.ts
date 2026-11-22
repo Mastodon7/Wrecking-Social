@@ -23,6 +23,7 @@ export class IntegrationRepository {
     private _exisingPlugData: PrismaRepository<'exisingPlugData'>,
     private _customers: PrismaRepository<'customer'>,
     private _mentions: PrismaRepository<'mentions'>,
+    private _metrics: PrismaRepository<'postMetricSnapshot'>,
     private _encryptionService: EncryptionService
   ) {}
 
@@ -1015,12 +1016,15 @@ export class IntegrationRepository {
   }
 
   // The IDs and links the platform returned for published posts are platform
-  // data (YouTube requires deleting them with the channel). The post itself
-  // stays, it is the user's own content
-  private removePlatformPostIds(where: {
+  // data (YouTube requires deleting them with the channel), and so are the
+  // engagement numbers Insights stored for them. The post itself stays, it is
+  // the user's own content
+  private async removePlatformPostIds(where: {
     organizationId: string;
     integrationId?: string;
   }) {
+    await this._metrics.model.postMetricSnapshot.deleteMany({ where });
+
     return this._posts.model.post.updateMany({
       where: {
         ...where,
