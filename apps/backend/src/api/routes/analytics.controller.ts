@@ -22,6 +22,14 @@ export class AnalyticsController {
     return this._integrationService.checkAnalytics(org, integration, date);
   }
 
+  @Get('/:integration/recent-posts')
+  async getRecentPosts(
+    @GetOrgFromRequest() org: Organization,
+    @Param('integration') integration: string
+  ) {
+    return this._integrationService.recentPosts(org, integration);
+  }
+
   @Get('/post/:postId')
   async getPostAnalytics(
     @GetOrgFromRequest() org: Organization,
