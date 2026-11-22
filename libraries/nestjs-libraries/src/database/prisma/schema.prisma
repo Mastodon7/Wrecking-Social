@@ -45,6 +45,8 @@ model Organization {
   webhooks            Webhooks[]
   oauthApp            OAuthApp[]
   oauthAuthorizations OAuthAuthorization[]
+  linkTracking        LinkTracking?
+  hashtagGroups       HashtagGroup[]
 
   @@index([apiKey])
   @@index([streakSince])
@@ -1868,4 +1870,31 @@ model PostMetricSnapshot {
   @@unique([postId, day])
   @@index([organizationId, day])
   @@index([integrationId])
+}
+
+// UTM tags added to our own links at publish time, one row per organization
+model LinkTracking {
+  organizationId String       @id
+  enabled        Boolean      @default(false)
+  // only links to these domains get tagged, comma separated (empty = none)
+  domains        String       @default("")
+  medium         String       @default("social")
+  campaign       String       @default("")
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+}
+
+// Saved sets of hashtags the editor can insert in one click
+model HashtagGroup {
+  id             String       @id @default(cuid())
+  organizationId String
+  name           String
+  tags           String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  deletedAt      DateTime?
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, deletedAt])
 }
