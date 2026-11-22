@@ -15,6 +15,14 @@ services:
     image: ghcr.io/mastodon7/wrecking-social:latest
     pull_policy: always
     restart: always
+    # Restarts the container when the app hangs (see var/docker/healthcheck.js)
+    healthcheck:
+      test: ['CMD', 'node', '/app/var/docker/healthcheck.js']
+      interval: 60s
+      timeout: 30s
+      retries: 3
+      start_period: 600s
+      start_interval: 10s
     environment:
       # Public address, for example https://app.wreckingsocial.com (no trailing slash)
       MAIN_URL: ${APP_URL:?}

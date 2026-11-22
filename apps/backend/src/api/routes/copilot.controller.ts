@@ -51,8 +51,7 @@ export class CopilotController {
       process.env.OPENAI_API_KEY === undefined ||
       process.env.OPENAI_API_KEY === ''
     ) {
-      Logger.warn('OpenAI API key not set, chat functionality will not work');
-      return;
+      return this.notConfigured(res);
     }
 
     const copilotRuntimeHandler = copilotRuntimeNodeHttpEndpoint({
@@ -78,8 +77,7 @@ export class CopilotController {
       process.env.OPENAI_API_KEY === undefined ||
       process.env.OPENAI_API_KEY === ''
     ) {
-      Logger.warn('OpenAI API key not set, chat functionality will not work');
-      return;
+      return this.notConfigured(res);
     }
     const mastra = await this._mastraService.mastra();
     const requestContext = new RequestContext<ChannelsContext>();
@@ -111,6 +109,16 @@ export class CopilotController {
     });
 
     return copilotRuntimeHandler(req, res);
+  }
+
+  // Without an OpenAI key the AI assistant cannot answer. Reply right away:
+  // with @Res() Nest sends nothing on its own, so returning without a
+  // response left each request open until nginx timed it out after 60 s
+  private notConfigured(res: Response) {
+    Logger.warn('OpenAI API key not set, chat functionality will not work');
+    res
+      .status(503)
+      .json({ message: 'The AI assistant is not set up on this server' });
   }
 
   @Get('/credits')
