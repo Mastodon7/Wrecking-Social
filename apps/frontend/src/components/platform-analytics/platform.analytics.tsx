@@ -11,6 +11,7 @@ import {
 } from '@gitroom/frontend/components/ui/platform.icon.component';
 import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
 import { RenderAnalytics } from '@gitroom/frontend/components/platform-analytics/render.analytics';
+import { RecentPosts } from '@gitroom/frontend/components/platform-analytics/recent.posts';
 import { Select } from '@gitroom/react/form/select';
 import { Button } from '@gitroom/react/form/button';
 import { useRouter } from 'next/navigation';
@@ -353,6 +354,13 @@ export const PlatformAnalytics = () => {
                 <RenderAnalytics integration={currentIntegration} date={keys} />
               )}
             </div>
+            {currentIntegration?.identifier === 'tiktok' && !refresh && (
+              <RecentPosts
+                key={currentIntegration.id}
+                integrationId={currentIntegration.id}
+                title="Recent TikTok videos"
+              />
+            )}
           </div>
         )}
       </div>

@@ -4,6 +4,7 @@ import {
   PendingCheckResponse,
   PostDetails,
   PostResponse,
+  RecentPost,
   SocialProvider,
 } from '@gitroom/nestjs-libraries/integrations/social/social.integrations.interface';
 import dayjs from 'dayjs';
@@ -1221,6 +1222,43 @@ export class TiktokProvider extends SocialAbstract implements SocialProvider {
       console.error('Error fetching TikTok analytics:', err);
       return [];
     }
+  }
+
+  // The account's most recent public videos with their numbers (video.list:
+  // TikTok only lists public videos), for the Analytics page
+  async recentPosts(id: string, accessToken: string): Promise<RecentPost[]> {
+    const raw = await (
+      await this.fetch(
+        'https://open.tiktokapis.com/v2/video/list/?fields=id,title,video_description,cover_image_url,share_url,create_time,view_count,like_count,comment_count,share_count',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({ max_count: 20 }),
+        }
+      )
+    ).text();
+
+    // video ids are int64, which JSON.parse rounds - keep them as strings
+    const data = JSON.parse(raw.replace(/"id"\s*:\s*(\d+)/g, '"id":"$1"'));
+    const number = (value: unknown) =>
+      typeof value === 'number' && Number.isFinite(value) ? value : null;
+
+    return (data?.data?.videos || []).map((video: any) => ({
+      id: String(video.id),
+      caption: video.title || video.video_description || '',
+      thumbnail: video.cover_image_url || null,
+      url: video.share_url || null,
+      publishedAt: video.create_time
+        ? new Date(Number(video.create_time) * 1000).toISOString()
+        : null,
+      views: number(video.view_count),
+      likes: number(video.like_count),
+      comments: number(video.comment_count),
+      shares: number(video.share_count),
+    }));
   }
 
   async missing(

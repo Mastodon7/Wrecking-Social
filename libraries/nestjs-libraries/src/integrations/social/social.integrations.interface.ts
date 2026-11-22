@@ -65,6 +65,21 @@ export interface IAuthenticator {
     id: string,
     accessToken: string
   ): Promise<{ id: string; url: string }[]>;
+  // The account's most recent posts on the platform with their numbers,
+  // listed on the Analytics page
+  recentPosts?(id: string, accessToken: string): Promise<RecentPost[]>;
+}
+
+export interface RecentPost {
+  id: string;
+  caption: string;
+  thumbnail: string | null;
+  url: string | null;
+  publishedAt: string | null;
+  views: number | null;
+  likes: number | null;
+  comments: number | null;
+  shares: number | null;
 }
 
 export interface AnalyticsData {

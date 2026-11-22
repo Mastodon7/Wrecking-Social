@@ -9,6 +9,7 @@ import { IntegrationRepository } from '@gitroom/nestjs-libraries/database/prisma
 import { IntegrationManager } from '@gitroom/nestjs-libraries/integrations/integration.manager';
 import {
   AnalyticsData,
+  RecentPost,
   SocialProvider,
 } from '@gitroom/nestjs-libraries/integrations/social/social.integrations.interface';
 import { Integration, Organization } from '@prisma/client';
@@ -694,6 +695,63 @@ export class IntegrationService {
         'Failed to generate auth URL',
         HttpStatus.INTERNAL_SERVER_ERROR
       );
+    }
+  }
+
+  // The channel's most recent posts on the platform with their numbers
+  // (TikTok: public videos from video.list), cached for 15 minutes
+  async recentPosts(
+    org: Organization,
+    integration: string,
+    forceRefresh = false
+  ): Promise<RecentPost[]> {
+    const getIntegration = await this.getIntegrationById(org.id, integration);
+    if (!getIntegration || getIntegration.type !== 'social') {
+      return [];
+    }
+
+    const integrationProvider = this._integrationManager.getSocialIntegration(
+      getIntegration.providerIdentifier
+    );
+    if (!integrationProvider?.recentPosts) {
+      return [];
+    }
+
+    if (
+      dayjs(getIntegration?.tokenExpiration).isBefore(dayjs()) ||
+      forceRefresh
+    ) {
+      const data = await this._refreshIntegrationService.refresh(
+        getIntegration
+      );
+      if (!data || !data.accessToken) {
+        return [];
+      }
+      getIntegration.token = data.accessToken;
+      if (integrationProvider.refreshWait) {
+        await timer(10000);
+      }
+    }
+
+    const cacheKey = `integration-recent:${org.id}:${integration}`;
+    const cached = await ioRedis.get(cacheKey);
+    if (cached && !forceRefresh) {
+      return JSON.parse(cached);
+    }
+
+    try {
+      const posts = await integrationProvider.recentPosts(
+        getIntegration.internalId,
+        getIntegration.token
+      );
+      await ioRedis.set(cacheKey, JSON.stringify(posts), 'EX', 900);
+      return posts;
+    } catch (e) {
+      if (e instanceof RefreshToken && !forceRefresh) {
+        return this.recentPosts(org, integration, true);
+      }
+      console.log('Could not load recent posts', e);
+      return [];
     }
   }
 
