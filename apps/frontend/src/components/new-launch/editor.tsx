@@ -18,6 +18,7 @@ import { Theme } from 'emoji-picker-react';
 import { BoldText } from '@gitroom/frontend/components/new-launch/bold.text';
 import { UText } from '@gitroom/frontend/components/new-launch/u.text';
 import { SignatureBox } from '@gitroom/frontend/components/signature';
+import { BrandVoiceBox } from '@gitroom/frontend/components/brand.voice.box';
 import { useT } from '@gitroom/react/translation/get.transation.service.client';
 import {
   SelectedIntegrations,
@@ -653,6 +654,15 @@ export const Editor: FC<{
   const [id] = useState(makeId(10));
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
   const t = useT();
+  // the channel whose brand voice the ✦ button uses: the channel being
+  // edited, the only selected channel, or "" for the default voice
+  const currentChannel = useLaunchStore((state) => state.current);
+  const voiceChannel =
+    currentChannel && currentChannel !== 'global'
+      ? currentChannel
+      : props.selectedIntegration?.length === 1
+      ? props.selectedIntegration[0].integration.id
+      : '';
   const toaster = useToaster();
   const editorRef = useRef<undefined | { editor: any }>(undefined);
   const [loading, setLoading] = useState(false);
@@ -1035,6 +1045,15 @@ export const Editor: FC<{
                     toolBar={
                       <div className="flex gap-[5px] mobile:gap-[4px]">
                         <SignatureBox editor={editorRef?.current?.editor} />
+                        {!props.dummy && (
+                          <BrandVoiceBox
+                            editor={editorRef?.current?.editor}
+                            value={props.value}
+                            integrationId={voiceChannel}
+                            platform={props.identifier || ''}
+                            onChange={props.onChange}
+                          />
+                        )}
                         {editorType !== 'none' && (
                           <>
                             <UText
