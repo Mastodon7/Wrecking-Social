@@ -314,7 +314,7 @@ export const InsightsComponent = () => {
     <div className="flex flex-col gap-[16px] p-[20px] mobile:p-[12px] overflow-y-auto">
       <div className="flex flex-wrap items-center justify-between gap-[12px]">
         <div className="flex flex-col gap-[4px]">
-          <div className="text-[24px] font-[600]">Insights</div>
+          {/* the page title is already in the app header */}
           <div className="text-[13px] text-textItemBlur">
             What gets your posts the most engagement, and when. Times shown in {data.timeZone}.
             {data.collectingSince
