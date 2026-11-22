@@ -56,10 +56,10 @@ export default async function DataDeletionPage(props: {
         destroy the channel&apos;s access tokens or credentials and its
         profile (name, username and picture), cancel its scheduled posts, and
         remove the IDs and links the platform returned for its published
-        posts. For YouTube and Google Business Profile we also ask Google to
+        posts and the engagement statistics we stored for them. For YouTube and Google Business Profile we also ask Google to
         revoke our access (unless the same channel is still connected in
-        another Wrecking Social workspace). Statistics are only cached for up
-        to one hour, so there is nothing else to delete. Posts already
+        another Wrecking Social workspace). Statistics fetched for the
+        Analytics page are only cached for up to one hour. Posts already
         published stay on the platform.
       </p>
 

@@ -98,6 +98,8 @@ services:
 
       # AI writing help (optional)
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      # Claude, for the AI summary on the Insights page
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
 
       # Billing (optional, leave empty until plans are ready)
       STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY:-}

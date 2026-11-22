@@ -1844,3 +1844,28 @@ model Announcement {
   color       AnnouncementColor @default(INFO)
   createdAt   DateTime          @default(now())
 }
+
+// One row per published post per day: the engagement numbers the platform
+// reported that day. Kept so Insights can compare posts over time (best
+// posting times, what content performs). Written by the daily
+// postMetricsWorkflow; erased with the channel or the account.
+model PostMetricSnapshot {
+  id             String   @id @default(cuid())
+  organizationId String
+  integrationId  String
+  postId         String
+  day            DateTime @db.Date
+  views          Int?
+  likes          Int?
+  comments       Int?
+  shares         Int?
+  saves          Int?
+  clicks         Int?
+  raw            Json
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([postId, day])
+  @@index([organizationId, day])
+  @@index([integrationId])
+}

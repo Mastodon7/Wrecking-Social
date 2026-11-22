@@ -196,10 +196,16 @@ export default function PrivacyPage() {
       </p>
       <p>
         We do not store content or statistics from these platforms beyond what
-        the Service needs: the profile of each connected account and the IDs
-        and links of the posts we publish for you. Statistics are fetched from
-        the platform when you open analytics and kept in a temporary cache for
-        up to one hour.
+        the Service needs: the profile of each connected account, the IDs and
+        links of the posts we publish for you, and, for the Insights page, a
+        daily record of the engagement numbers of those posts (views, likes,
+        comments, shares, saves and clicks, as the platform reports them).
+        Each post is measured once a day for 60 days after it is published, so
+        Insights can show which posts and posting times perform best.
+        Statistics from YouTube and Google Business Profile are deleted after
+        30 days. Statistics shown on the Analytics page are fetched from the
+        platform when you open it and kept in a temporary cache for up to one
+        hour.
       </p>
 
       <h3>Information collected automatically</h3>
@@ -251,11 +257,13 @@ export default function PrivacyPage() {
           <strong>With service providers</strong> that run parts of the
           Service for us under contract and only on our instructions: our
           hosting and storage providers, our email delivery provider, Stripe
-          for payments, and, only when you use an AI feature, our AI provider
-          (such as OpenAI), which receives your request and the information
-          needed to answer it (for example the text of a post or the names of
-          your connected channels) under terms that do not allow it to train
-          its models on that data. Statistics and other content we receive
+          for payments, and, only when you use an AI feature, our AI providers
+          (OpenAI for writing help and Anthropic for the Insights analysis),
+          which receive your request and the information needed to answer it
+          (for example the text of a post, the names of your connected
+          channels, or, when you choose <em>Analyze my posts</em>, the
+          captions, posting times and engagement numbers of your posts) under
+          terms that do not allow them to train their models on that data. Statistics and other content we receive
           from Google APIs are never sent to an AI provider; only the name of
           a connected channel may be, when you ask the AI assistant about your
           channels.
@@ -356,7 +364,8 @@ export default function PrivacyPage() {
           cancel our access where the platform supports it (YouTube and Google
           Business Profile), destroy its tokens and profile right away, cancel
           its scheduled posts, and remove the IDs and links the platform
-          returned for its published posts. Posts already published stay on
+          returned for its published posts and the statistics we stored for
+          them. Posts already published stay on
           the platform; delete them there if you want them gone.
         </li>
         <li>
@@ -375,7 +384,8 @@ export default function PrivacyPage() {
           the paid subscription of workspaces you own, ask the platforms to
           cancel our access where supported, destroy your sign-in details and
           the tokens and profiles of the channels in workspaces you own,
-          remove the platform IDs and links of their posts, cancel scheduled
+          remove the platform IDs, links and stored statistics of their posts,
+          cancel scheduled
           posts, and remove your personal details from your user record. If
           you are a member of a workspace someone else owns, you are removed
           from it and its channels and posts stay with its owner. Your own

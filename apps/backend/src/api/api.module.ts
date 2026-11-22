@@ -9,6 +9,7 @@ import { PaymentService } from '@gitroom/nestjs-libraries/services/payment/payme
 import { PaymentProviderManager } from '@gitroom/nestjs-libraries/services/payment/payment.provider.manager';
 import { RevenueCatProvider } from '@gitroom/nestjs-libraries/services/payment/providers/revenuecat.provider';
 import { AnalyticsController } from '@gitroom/backend/api/routes/analytics.controller';
+import { InsightsController } from '@gitroom/backend/api/routes/insights.controller';
 import { PoliciesGuard } from '@gitroom/backend/services/auth/permissions/permissions.guard';
 import { PermissionsService } from '@gitroom/backend/services/auth/permissions/permissions.service';
 import { IntegrationsController } from '@gitroom/backend/api/routes/integrations.controller';
@@ -61,6 +62,7 @@ import { PlatformCallbacksController } from '@gitroom/backend/api/routes/platfor
 const authenticatedController = [
   UsersController,
   AnalyticsController,
+  InsightsController,
   IntegrationsController,
   SettingsController,
   PostsController,
