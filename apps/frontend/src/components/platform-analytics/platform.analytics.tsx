@@ -306,6 +306,31 @@ export const PlatformAnalytics = () => {
         </div>
       </div>
       <div className="bg-newBgColorInner flex-1 flex-col flex p-[20px] mobile:p-[12px] gap-[12px]">
+        {!!currentIntegration && (
+          // The account these numbers belong to: its name, and the handle
+          // the platform returned at connect (TikTok: user.info.profile)
+          <div className="flex items-center gap-[12px]">
+            <ImageWithFallback
+              fallbackSrc={`/icons/platforms/${currentIntegration.identifier}.png`}
+              src={currentIntegration.picture}
+              className="rounded-full"
+              alt={currentIntegration.name}
+              width={44}
+              height={44}
+            />
+            <div className="flex flex-col">
+              <div className="text-[16px] font-[600]">
+                {currentIntegration.name}
+              </div>
+              {!!currentIntegration.display && (
+                <div className="text-[13px] text-textItemBlur">
+                  @{String(currentIntegration.display).replace(/^@/, '')}
+                  {currentIntegration.identifier === 'tiktok' && ' · TikTok profile'}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
         {!!options.length && (
           <div className="flex-1 flex flex-col gap-[14px]">
             <div className="max-w-[200px]">
