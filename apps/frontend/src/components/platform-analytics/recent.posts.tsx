@@ -1,7 +1,7 @@
 'use client';
 
 import useSWR from 'swr';
-import { FC, useCallback } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
 
 type RecentPost = {
@@ -15,6 +15,15 @@ type RecentPost = {
   comments: number | null;
   shares: number | null;
 };
+
+type SortKey = 'publishedAt' | 'views' | 'likes' | 'comments' | 'shares';
+
+const sortValue = (post: RecentPost, key: SortKey) =>
+  key === 'publishedAt'
+    ? post.publishedAt
+      ? new Date(post.publishedAt).getTime()
+      : null
+    : post[key];
 
 const number = (value: number | null) =>
   value === null ? '—' : Intl.NumberFormat('en-US').format(value);
@@ -32,6 +41,55 @@ export const RecentPosts: FC<{ integrationId: string; title: string }> = ({
     revalidateOnFocus: false,
   });
 
+  // Click a column to sort by it, biggest/newest first; click again to flip.
+  // Rows without a number always go last.
+  const [sort, setSort] = useState<{ key: SortKey; desc: boolean }>({
+    key: 'publishedAt',
+    desc: true,
+  });
+  const rows = useMemo(() => {
+    return [...(data || [])].sort((a, b) => {
+      const x = sortValue(a, sort.key);
+      const y = sortValue(b, sort.key);
+      if (x === null && y === null) return 0;
+      if (x === null) return 1;
+      if (y === null) return -1;
+      return sort.desc ? y - x : x - y;
+    });
+  }, [data, sort]);
+
+  const header = (key: SortKey, label: string, align: 'start' | 'end') => {
+    const active = sort.key === key;
+    return (
+      <th
+        className={`font-[500] pb-[8px] ${
+          align === 'end' ? 'text-end' : 'text-start'
+        }`}
+        aria-sort={active ? (sort.desc ? 'descending' : 'ascending') : 'none'}
+      >
+        <button
+          type="button"
+          onClick={() =>
+            setSort(active ? { key, desc: !sort.desc } : { key, desc: true })
+          }
+          className={`inline-flex items-center gap-[4px] hover:text-newTextColor ${
+            active ? 'text-newTextColor' : ''
+          }`}
+          title={
+            key === 'publishedAt'
+              ? 'Sort by date (newest / oldest)'
+              : `Sort by ${label.toLowerCase()} (most / least)`
+          }
+        >
+          {label}
+          <span className={active ? '' : 'opacity-30'}>
+            {active && !sort.desc ? '▲' : '▼'}
+          </span>
+        </button>
+      </th>
+    );
+  };
+
   return (
     <div className="flex flex-col gap-[12px]">
       <div className="text-[16px] font-[600]">{title}</div>
@@ -47,15 +105,15 @@ export const RecentPosts: FC<{ integrationId: string; title: string }> = ({
             <thead>
               <tr className="text-textItemBlur text-start">
                 <th className="text-start font-[500] pb-[8px]">Video</th>
-                <th className="text-start font-[500] pb-[8px]">Posted</th>
-                <th className="text-end font-[500] pb-[8px]">Views</th>
-                <th className="text-end font-[500] pb-[8px]">Likes</th>
-                <th className="text-end font-[500] pb-[8px]">Comments</th>
-                <th className="text-end font-[500] pb-[8px]">Shares</th>
+                {header('publishedAt', 'Posted', 'start')}
+                {header('views', 'Views', 'end')}
+                {header('likes', 'Likes', 'end')}
+                {header('comments', 'Comments', 'end')}
+                {header('shares', 'Shares', 'end')}
               </tr>
             </thead>
             <tbody>
-              {data.map((post) => (
+              {rows.map((post) => (
                 <tr key={post.id} className="border-t border-newBgLineColor">
                   <td className="py-[8px] pe-[12px]">
                     <a
