@@ -112,8 +112,9 @@ export default function PrivacyPage() {
             <td>
               Lists the Facebook Pages you manage so you can choose one, publishes
               the posts you schedule to that Page (and the follow-up comments
-              you add to them), and reads the Page&apos;s post and Page
-              statistics for analytics.
+              you add to them), reads the Page&apos;s post and Page
+              statistics for analytics, and reads the comments people leave
+              on those posts so you can answer them from the Inbox.
             </td>
           </tr>
           <tr>
@@ -121,15 +122,19 @@ export default function PrivacyPage() {
             <td>
               Reads your Instagram professional account&apos;s profile,
               publishes the photos, videos, reels and carousels you schedule
-              (and the follow-up comments you add to them), and reads
-              statistics of your account and posts for analytics.
+              (and the follow-up comments you add to them), reads
+              statistics of your account and posts for analytics, and reads
+              the comments people leave on those posts so you can answer them
+              from the Inbox.
             </td>
           </tr>
           <tr>
             <td>Threads (Meta)</td>
             <td>
               Reads your Threads profile, publishes the posts you schedule and
-              the replies you add to them, and reads their statistics.
+              the replies you add to them, reads their statistics, and reads
+              the replies people leave on them so you can answer them from
+              the Inbox.
             </td>
           </tr>
           <tr>
@@ -147,8 +152,10 @@ export default function PrivacyPage() {
             <td>
               Reads your channel&apos;s name and picture, uploads the videos
               you schedule with the title, description, privacy status and
-              other details you enter, and reads your channel and video
-              statistics from YouTube Analytics.
+              other details you enter, reads your channel and video
+              statistics from YouTube Analytics, and reads the comments
+              people leave on those videos so you can answer them from the
+              Inbox.
             </td>
           </tr>
           <tr>
@@ -165,7 +172,9 @@ export default function PrivacyPage() {
               Reads your name and photo (and the LinkedIn Pages you administer,
               if you connect a Page), publishes the posts you schedule and
               the follow-up comments you add to them, and, for Pages, reads
-              Page and post statistics for analytics.
+              Page and post statistics for analytics and the comments people
+              leave on the Page&apos;s posts so you can answer them from the
+              Inbox.
             </td>
           </tr>
           <tr>
@@ -181,8 +190,9 @@ export default function PrivacyPage() {
             <td>
               Signs in to your account with the handle and app password you
               enter, reads your profile (display name, handle and picture),
-              and publishes the posts you schedule and the replies you add to
-              them.
+              publishes the posts you schedule and the replies you add to
+              them, and reads the public replies people leave on those posts
+              so you can answer them from the Inbox.
             </td>
           </tr>
         </tbody>
@@ -190,9 +200,10 @@ export default function PrivacyPage() {
       <p>
         We do not read your private messages, and we do not post anything you
         did not create or schedule. We do not follow, like or comment on your
-        behalf, except for the optional automations you turn on yourself for
-        a post (for example, adding a reply once the post reaches a number of
-        likes), which you can turn off at any time.
+        behalf, except for the replies you write yourself in the Inbox and
+        the optional automations you turn on yourself for a post (for
+        example, adding a reply once the post reaches a number of likes),
+        which you can turn off at any time.
       </p>
       <p>
         We do not store content or statistics from these platforms beyond what
@@ -200,6 +211,16 @@ export default function PrivacyPage() {
         and links of the posts we publish for you. Statistics are fetched from
         the platform when you open analytics and kept in a temporary cache for
         up to one hour.
+      </p>
+      <p>
+        The Inbox shows the comments and replies people leave on posts
+        published through Wrecking Social in the last 30 days (the
+        commenter&apos;s name, username and picture as the platform shows
+        them, the comment text and its date). They are fetched from the
+        platform when you open the Inbox and kept in a temporary cache for up
+        to two minutes; we do not store them, and nothing from the Inbox is
+        sent to an AI provider. When you reply, your reply is sent to the
+        platform as the connected account and is not kept by us.
       </p>
 
       <h3>Information collected automatically</h3>

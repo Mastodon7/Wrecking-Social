@@ -3,10 +3,12 @@ import {
   AnalyticsData,
   AuthTokenDetails,
   PendingCheckResponse,
+  PlatformComment,
   PostDetails,
   PostResponse,
   SocialProvider,
 } from '@gitroom/nestjs-libraries/integrations/social/social.integrations.interface';
+import { makeId } from '@gitroom/nestjs-libraries/services/make.is';
 import { makeSecureId } from '@gitroom/nestjs-libraries/services/make.secure.id';
 import { timer } from '@gitroom/helpers/utils/timer';
 import dayjs from 'dayjs';
@@ -770,6 +772,63 @@ export class ThreadsProvider extends SocialAbstract implements SocialProvider {
         releaseURL: permalink,
       },
     ];
+  }
+
+  // Reading replies needs threads_read_replies, answering them threads_manage_replies
+  async listComments(
+    id: string,
+    accessToken: string,
+    postId: string
+  ): Promise<PlatformComment[]> {
+    const { data } = await (
+      await this.fetch(
+        `https://graph.threads.net/v1.0/${postId}/conversation?fields=id,text,username,timestamp,permalink,replied_to,is_reply_owned_by_me&access_token=${accessToken}`
+      )
+    ).json();
+
+    return (data || []).map((reply: any) => ({
+      id: reply.id,
+      ...(reply.replied_to?.id && reply.replied_to.id !== postId
+        ? { parentId: reply.replied_to.id }
+        : {}),
+      text: reply.text || '',
+      createdAt: reply.timestamp,
+      author: {
+        name: reply.username || 'Threads user',
+        username: reply.username,
+      },
+      own: !!reply.is_reply_owned_by_me,
+      url: reply.permalink,
+    }));
+  }
+
+  async replyToComment(
+    id: string,
+    accessToken: string,
+    postId: string,
+    commentId: string,
+    message: string,
+    integration: Integration
+  ) {
+    const [reply] = await this.comment(
+      id,
+      postId,
+      commentId,
+      accessToken,
+      [
+        {
+          id: makeId(10),
+          message,
+          settings: {
+            active_thread_finisher: false,
+            thread_finisher: '',
+          },
+          media: [],
+        },
+      ],
+      integration
+    );
+    return { id: reply.postId, url: reply.releaseURL };
   }
 
   async analytics(

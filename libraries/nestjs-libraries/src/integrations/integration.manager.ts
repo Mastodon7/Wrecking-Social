@@ -262,6 +262,13 @@ export class IntegrationManager {
     return socialIntegrationList.find((i) => i.identifier === integration)!;
   }
 
+  // Providers whose comments can be read and answered from the inbox
+  commentInboxProviders() {
+    return socialIntegrationList
+      .filter((p) => p.listComments && p.replyToComment)
+      .map((p) => p.identifier);
+  }
+
   dailyAuthorizationCheckProviders() {
     return socialIntegrationList
       .filter((p) => p.dailyAuthorizationCheck)

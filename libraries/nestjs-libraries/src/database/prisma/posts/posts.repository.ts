@@ -442,6 +442,52 @@ export class PostsRepository {
     });
   }
 
+  // Published posts of the last 30 days on channels that are working, for the
+  // comment inbox (comments are read from the platforms, never stored)
+  async getPublishedPostsForInbox(orgId: string, providers: string[]) {
+    const posts = await this._post.model.post.findMany({
+      where: {
+        organizationId: orgId,
+        state: 'PUBLISHED',
+        deletedAt: null,
+        parentPostId: null,
+        releaseId: {
+          not: null,
+        },
+        NOT: {
+          releaseId: 'missing',
+        },
+        publishDate: {
+          gte: dayjs.utc().subtract(30, 'day').toDate(),
+        },
+        integration: {
+          providerIdentifier: {
+            in: providers,
+          },
+          deletedAt: null,
+          disabled: false,
+          refreshNeeded: false,
+          inBetweenSteps: false,
+        },
+      },
+      orderBy: {
+        publishDate: 'desc',
+      },
+      take: 30,
+      select: {
+        id: true,
+        content: true,
+        publishDate: true,
+        releaseId: true,
+        releaseURL: true,
+        settings: true,
+        integration: true,
+      },
+    });
+
+    return Promise.all(posts.map((p) => this.decryptIntegration(p)));
+  }
+
   async getPostsByGroup(orgId: string, group: string) {
     const posts = await this._post.model.post.findMany({
       where: {

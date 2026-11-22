@@ -45,7 +45,12 @@ import {
   organizationId,
   postId as postIdSearchParam,
 } from '@gitroom/nestjs-libraries/temporal/temporal.search.attribute';
-import { AnalyticsData } from '@gitroom/nestjs-libraries/integrations/social/social.integrations.interface';
+import {
+  AnalyticsData,
+  PlatformComment,
+  SocialProvider,
+} from '@gitroom/nestjs-libraries/integrations/social/social.integrations.interface';
+import { ReplyPlatformCommentDto } from '@gitroom/nestjs-libraries/dtos/inbox/reply.platform.comment.dto';
 import { timer } from '@gitroom/helpers/utils/timer';
 import { ioRedis } from '@gitroom/nestjs-libraries/redis/redis.service';
 import { RefreshToken } from '@gitroom/nestjs-libraries/integrations/social.abstract';
@@ -461,6 +466,194 @@ export class PostsService {
     }
 
     return [];
+  }
+
+  // Comments other people left on the posts published in the last 30 days.
+  // They are read from the platforms when the inbox is opened and kept in
+  // Redis for 2 minutes only, never stored in the database
+  async getInbox(orgId: string, refresh = false) {
+    const cacheKey = `inbox:${orgId}`;
+    if (!refresh) {
+      const cached = await ioRedis.get(cacheKey);
+      if (cached) {
+        return JSON.parse(cached);
+      }
+    }
+
+    const posts = await this._postRepository.getPublishedPostsForInbox(
+      orgId,
+      this._integrationManager.commentInboxProviders()
+    );
+
+    const errors: { integration: string; name: string }[] = [];
+    const channels = await Promise.all(
+      Object.values(groupBy(posts, (p) => p.integration.id)).map(
+        async (channelPosts) => {
+          const integration = channelPosts[0].integration;
+          const provider = this._integrationManager.getSocialIntegration(
+            integration.providerIdentifier
+          );
+          const channel = {
+            id: integration.id,
+            name: integration.name,
+            picture: integration.picture,
+            providerIdentifier: integration.providerIdentifier,
+          };
+
+          const comments = [];
+          let failed = false;
+          // One post at a time per channel, so a token refresh happens once
+          for (const post of channelPosts) {
+            try {
+              const list = await this.withInboxToken(
+                integration,
+                provider,
+                (token) =>
+                  provider.listComments!(
+                    integration.internalId,
+                    token,
+                    post.releaseId!,
+                    integration
+                  )
+              );
+              const preview = postContentPlainText(post.content);
+              comments.push(
+                ...list.map((comment: PlatformComment) => ({
+                  ...comment,
+                  replyToId: comment.replyToId || comment.id,
+                  integration: channel,
+                  post: {
+                    id: post.id,
+                    preview:
+                      preview.length > 120
+                        ? preview.slice(0, 117) + '...'
+                        : preview,
+                    url: post.releaseURL,
+                    publishDate: post.publishDate,
+                  },
+                }))
+              );
+            } catch (e) {
+              console.log(
+                `inbox: could not read comments of post ${post.id}`,
+                e
+              );
+              failed = true;
+            }
+          }
+
+          if (failed) {
+            errors.push({ integration: integration.id, name: integration.name });
+          }
+
+          return comments;
+        }
+      )
+    );
+
+    const inbox = {
+      comments: channels
+        .flat()
+        .sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )
+        .slice(0, 300),
+      errors,
+    };
+
+    await ioRedis.set(cacheKey, JSON.stringify(inbox), 'EX', 120);
+    return inbox;
+  }
+
+  async replyToPlatformComment(
+    orgId: string,
+    postId: string,
+    body: ReplyPlatformCommentDto
+  ) {
+    const post = await this._postRepository.getPostById(postId, orgId);
+    if (
+      !post ||
+      post.deletedAt ||
+      !post.releaseId ||
+      post.releaseId === 'missing' ||
+      !post.integration ||
+      post.integration.deletedAt
+    ) {
+      throw new BadRequestException('Post not found');
+    }
+
+    const integration = post.integration;
+    const provider = this._integrationManager.getSocialIntegration(
+      integration.providerIdentifier
+    );
+    if (!provider?.replyToComment) {
+      throw new BadRequestException(
+        'Replies are not available for this channel'
+      );
+    }
+
+    if (body.message.length > provider.maxLength()) {
+      throw new BadRequestException(
+        `${provider.name} replies can be up to ${provider.maxLength()} characters`
+      );
+    }
+
+    try {
+      const reply = await this.withInboxToken(integration, provider, (token) =>
+        provider.replyToComment!(
+          integration.internalId,
+          token,
+          post.releaseId!,
+          body.commentId,
+          body.message,
+          integration
+        )
+      );
+      await ioRedis.del(`inbox:${orgId}`);
+      return reply;
+    } catch (e) {
+      console.log(`inbox: reply on post ${post.id} failed`, e);
+      throw new BadRequestException(
+        `${integration.name} did not accept the reply. The channel may need to be reconnected.`
+      );
+    }
+  }
+
+  // Runs a call with a valid token: refreshes it first when it has expired,
+  // and once more when the platform rejects it
+  private async withInboxToken<T>(
+    integration: Integration,
+    provider: SocialProvider,
+    call: (token: string) => Promise<T>
+  ): Promise<T> {
+    if (dayjs(integration.tokenExpiration).isBefore(dayjs())) {
+      await this.refreshInboxToken(integration, provider);
+    }
+
+    try {
+      return await call(integration.token);
+    } catch (e) {
+      if (!(e instanceof RefreshToken)) {
+        throw e;
+      }
+      await this.refreshInboxToken(integration, provider);
+      return call(integration.token);
+    }
+  }
+
+  private async refreshInboxToken(
+    integration: Integration,
+    provider: SocialProvider
+  ) {
+    const data = await this._refreshIntegrationService.refresh(integration);
+    if (!data || !data.accessToken) {
+      throw new Error(`inbox: could not refresh ${integration.id}`);
+    }
+    integration.token = data.accessToken;
+    if (provider.refreshWait) {
+      await timer(10000);
+    }
   }
 
   async getStatistics(orgId: string, id: string) {
