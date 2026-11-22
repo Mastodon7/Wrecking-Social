@@ -32,6 +32,7 @@ import {
 } from '@gitroom/frontend/components/launches/helpers/date.picker';
 import { useShallow } from 'zustand/react/shallow';
 import { RepeatComponent } from '@gitroom/frontend/components/launches/repeat.component';
+import { BestTimeButton } from '@gitroom/frontend/components/launches/best.time';
 import {
   Check,
   TagsComponent,
@@ -1287,6 +1288,14 @@ export const ManageModal: FC<AddEditModalProps> = (props) => {
                 <div>{t('delete_post', 'Delete Post')}</div>
               </button>
             )}
+            {!dummy && (
+              <BestTimeButton
+                integrationIds={selectedIntegrations.map(
+                  (p) => p.integration.id
+                )}
+                onPick={setPickerDate}
+              />
+            )}
             <DatePicker onChange={setPickerDate} date={pickerDate} />
             {!addEditSets && (
               <button
@@ -1480,11 +1489,22 @@ export const ManageModal: FC<AddEditModalProps> = (props) => {
             },
           }}
         >
-          <DatePickerPanel
-            date={dateDraft}
-            onChange={setDateDraft}
-            sheet={true}
-          />
+          <div className="flex flex-col gap-[16px]">
+            {!dummy && !!selectedIntegrations.length && (
+              <BestTimeButton
+                sheet={true}
+                integrationIds={selectedIntegrations.map(
+                  (p) => p.integration.id
+                )}
+                onPick={setDateDraft}
+              />
+            )}
+            <DatePickerPanel
+              date={dateDraft}
+              onChange={setDateDraft}
+              sheet={true}
+            />
+          </div>
         </BottomSheet>
       )}
       {mobileSheet === 'repeat' && (

@@ -172,7 +172,8 @@ export class InsightsService {
     organizationId: string,
     days: number,
     tz?: string,
-    excludeProviders: string[] = []
+    excludeProviders: string[] = [],
+    integrationIds: string[] = []
   ) {
     const timeZone = this.validTimeZone(tz);
     const period = this.period(days);
@@ -193,7 +194,8 @@ export class InsightsService {
       .filter(
         ({ post }) =>
           dayjs(post.publishDate).isAfter(since) &&
-          !excludeProviders.includes(post.integration.providerIdentifier)
+          !excludeProviders.includes(post.integration.providerIdentifier) &&
+          (!integrationIds.length || integrationIds.includes(post.integration.id))
       )
       .map(({ post, snapshot }) => {
         const metrics: MetricValues = {
@@ -294,6 +296,47 @@ export class InsightsService {
       ),
       topPosts: byScore.slice(0, 5),
       bottomPosts: byScore.length > 5 ? byScore.slice(-5).reverse() : [],
+    };
+  }
+
+  // The hours that worked best, for the "Best time" button in the composer.
+  // It looks at the chosen channels first; with too little data there it
+  // falls back to the whole account, then to common defaults. The composer
+  // turns each weekday + hour into the next date in the user's timezone.
+  async bestTime(organizationId: string, integrationIds: string[], tz?: string) {
+    const fromChannels = integrationIds.length
+      ? await this.getInsights(organizationId, 90, tz, [], integrationIds)
+      : null;
+    if (fromChannels && fromChannels.totals.posts >= 6 && fromChannels.bestTimes.length) {
+      return {
+        basis: 'channels' as const,
+        timeZone: fromChannels.timeZone,
+        measuredPosts: fromChannels.totals.posts,
+        slots: fromChannels.bestTimes.slice(0, 3),
+      };
+    }
+
+    const fromAccount = await this.getInsights(organizationId, 90, tz);
+    if (fromAccount.totals.posts >= 6 && fromAccount.bestTimes.length) {
+      return {
+        basis: 'account' as const,
+        timeZone: fromAccount.timeZone,
+        measuredPosts: fromAccount.totals.posts,
+        slots: fromAccount.bestTimes.slice(0, 3),
+      };
+    }
+
+    // Not enough history yet: midweek late morning and early evening are
+    // the usual starting points until our own numbers say otherwise
+    return {
+      basis: 'default' as const,
+      timeZone: fromAccount.timeZone,
+      measuredPosts: fromAccount.totals.posts,
+      slots: [
+        { weekday: 'Wed', hour: 11, posts: 0, avgScore: 0 },
+        { weekday: 'Tue', hour: 18, posts: 0, avgScore: 0 },
+        { weekday: 'Thu', hour: 12, posts: 0, avgScore: 0 },
+      ],
     };
   }
 
