@@ -18,7 +18,6 @@ import { Theme } from 'emoji-picker-react';
 import { BoldText } from '@gitroom/frontend/components/new-launch/bold.text';
 import { UText } from '@gitroom/frontend/components/new-launch/u.text';
 import { SignatureBox } from '@gitroom/frontend/components/signature';
-import { BrandVoiceBox } from '@gitroom/frontend/components/brand.voice.box';
 import { useT } from '@gitroom/react/translation/get.transation.service.client';
 import {
   SelectedIntegrations,
@@ -28,6 +27,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { AddPostButton } from '@gitroom/frontend/components/new-launch/add.post.button';
 import { MultiMediaComponent } from '@gitroom/frontend/components/media/media.component';
 import { UpDownArrow } from '@gitroom/frontend/components/launches/up.down.arrow';
+import { BrandVoiceBox } from '@gitroom/frontend/components/brand.voice.box';
 import { deleteDialog } from '@gitroom/react/helpers/delete.dialog';
 import { useExistingData } from '@gitroom/frontend/components/launches/helpers/use.existing.data';
 import { useCopilotAction, useCopilotReadable } from '@copilotkit/react-core';
@@ -1044,7 +1044,6 @@ export const Editor: FC<{
                     }
                     toolBar={
                       <div className="flex gap-[5px] mobile:gap-[4px]">
-                        <SignatureBox editor={editorRef?.current?.editor} />
                         {!props.dummy && (
                           <BrandVoiceBox
                             editor={editorRef?.current?.editor}
@@ -1054,6 +1053,7 @@ export const Editor: FC<{
                             onChange={props.onChange}
                           />
                         )}
+                        <SignatureBox editor={editorRef?.current?.editor} />
                         {editorType !== 'none' && (
                           <>
                             <UText
