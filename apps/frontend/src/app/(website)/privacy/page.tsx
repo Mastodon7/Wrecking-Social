@@ -224,9 +224,19 @@ export default function PrivacyPage() {
         commenter&apos;s name, username and picture as the platform shows
         them, the comment text and its date). They are fetched from the
         platform when you open the Inbox and kept in a temporary cache for up
-        to two minutes; we do not store them, and nothing from the Inbox is
-        sent to an AI provider. When you reply, your reply is sent to the
-        platform as the connected account and is not kept by us.
+        to two minutes; we do not store them. To keep track of your team&apos;s
+        work we store, for a comment you mark done or assign, only the
+        platform&apos;s ID of that comment, whether it is done and which team
+        member it is assigned to; this is deleted with the channel or the
+        account. You can also save reply templates and a short description of
+        your business for reply drafts. If you choose{' '}
+        <em>Draft with AI</em> on a comment, that comment&apos;s text, the
+        commenter&apos;s display name, a short preview of your post and your
+        saved business description are sent to our AI provider to write a
+        suggested reply; nothing else from the Inbox is sent to an AI
+        provider, and YouTube comments never are. When you reply, your reply
+        is sent to the platform as the connected account and is not kept by
+        us.
       </p>
 
       <h3>Information collected automatically</h3>
@@ -279,7 +289,7 @@ export default function PrivacyPage() {
           Service for us under contract and only on our instructions: our
           hosting and storage providers, our email delivery provider, Stripe
           for payments, and, only when you use an AI feature, our AI providers
-          (OpenAI for writing help and Anthropic for the Insights analysis),
+          (OpenAI for writing help, and Anthropic for the Insights analysis and Inbox reply drafts),
           which receive your request and the information needed to answer it
           (for example the text of a post, the names of your connected
           channels, or, when you choose <em>Analyze my posts</em>, the

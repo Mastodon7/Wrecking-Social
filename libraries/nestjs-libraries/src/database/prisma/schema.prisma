@@ -37,6 +37,9 @@ model Organization {
   submittedPost       Post[]               @relation("submittedForOrg")
   sets                Sets[]
   signatures          Signatures[]
+  inboxStates         InboxCommentState[]
+  savedReplies        SavedReply[]
+  inboxSettings       InboxSettings?
   subscription        Subscription?
   tags                Tags[]
   thirdParty          ThirdParty[]
@@ -410,6 +413,47 @@ model Integration {
   @@index([inBetweenSteps])
   @@index([refreshNeeded])
   @@index([disabled])
+}
+
+// Inbox: whether a comment is handled and who handles it. Only the
+// platform's comment ID is kept, never the comment itself
+model InboxCommentState {
+  id             String       @id @default(cuid())
+  organizationId String
+  integrationId  String
+  commentId      String
+  done           Boolean      @default(false)
+  assignedToId   String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, integrationId, commentId])
+  @@index([organizationId, updatedAt])
+  @@index([integrationId])
+}
+
+// Inbox: answers the team reuses
+model SavedReply {
+  id             String       @id @default(cuid())
+  organizationId String
+  title          String
+  content        String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  deletedAt      DateTime?
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, deletedAt])
+}
+
+// Inbox: the facts AI reply drafts may use (products, turnaround, links)
+model InboxSettings {
+  organizationId String       @id
+  knowledge      String       @default("")
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 model Signatures {
