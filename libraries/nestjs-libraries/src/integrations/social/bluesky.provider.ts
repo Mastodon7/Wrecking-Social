@@ -1,10 +1,12 @@
 import {
   AuthTokenDetails,
   PendingCheckResponse,
+  PlatformComment,
   PostDetails,
   PostResponse,
   SocialProvider,
 } from '@gitroom/nestjs-libraries/integrations/social/social.integrations.interface';
+import { makeId } from '@gitroom/nestjs-libraries/services/make.is';
 import { makeSecureId } from '@gitroom/nestjs-libraries/services/make.secure.id';
 import { setHeartbeatDetails } from '@gitroom/nestjs-libraries/temporal/temporal.heartbeat';
 import {
@@ -843,6 +845,72 @@ export class BlueskyProvider extends SocialAbstract implements SocialProvider {
           .pop()}`,
       },
     ];
+  }
+
+  // Read from the public Bluesky AppView, so listing needs no login (the
+  // login endpoint is strictly rate limited); only a reply logs in
+  async listComments(
+    id: string,
+    accessToken: string,
+    postId: string,
+    integration: Integration
+  ): Promise<PlatformComment[]> {
+    const { thread } = await (
+      await this.fetch(
+        `https://public.api.bsky.app/xrpc/app.bsky.feed.getPostThread?uri=${encodeURIComponent(
+          postId
+        )}&depth=3&parentHeight=0`
+      )
+    ).json();
+
+    const flatten = (replies: any[], parentUri?: string): PlatformComment[] =>
+      (replies || []).flatMap((reply: any) =>
+        reply?.post
+          ? [
+              {
+                id: reply.post.uri,
+                ...(parentUri ? { parentId: parentUri } : {}),
+                text: reply.post.record?.text || '',
+                createdAt: reply.post.record?.createdAt || reply.post.indexedAt,
+                author: {
+                  name:
+                    reply.post.author?.displayName || reply.post.author?.handle,
+                  username: reply.post.author?.handle,
+                  picture: reply.post.author?.avatar,
+                },
+                own:
+                  reply.post.author?.did === id ||
+                  (!!integration.profile &&
+                    reply.post.author?.handle === integration.profile),
+                url: `https://bsky.app/profile/${
+                  reply.post.author?.handle
+                }/post/${reply.post.uri.split('/').pop()}`,
+              },
+              ...flatten(reply.replies, reply.post.uri),
+            ]
+          : []
+      );
+
+    return flatten(thread?.replies);
+  }
+
+  async replyToComment(
+    id: string,
+    accessToken: string,
+    postId: string,
+    commentId: string,
+    message: string,
+    integration: Integration
+  ) {
+    const [reply] = await this.comment(
+      id,
+      postId,
+      commentId,
+      accessToken,
+      [{ id: makeId(10), message, settings: {}, media: [] }],
+      integration
+    );
+    return { id: reply.postId, url: reply.releaseURL };
   }
 
   @Plug({

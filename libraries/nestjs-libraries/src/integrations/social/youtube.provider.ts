@@ -2,6 +2,7 @@ import {
   AnalyticsData,
   AuthTokenDetails,
   PendingCheckResponse,
+  PlatformComment,
   PostDetails,
   PostResponse,
   SocialProvider,
@@ -1040,6 +1041,99 @@ export class YoutubeProvider extends SocialAbstract implements SocialProvider {
       return acc;
     } catch (err) {
       return [];
+    }
+  }
+
+  async listComments(
+    id: string,
+    accessToken: string,
+    postId: string
+  ): Promise<PlatformComment[]> {
+    try {
+      const { client, youtube } = clientAndYoutube();
+      client.setCredentials({ access_token: accessToken });
+
+      const { data } = await youtube(client).commentThreads.list({
+        part: ['snippet', 'replies'],
+        videoId: postId,
+        maxResults: 50,
+        order: 'time',
+        textFormat: 'plainText',
+      });
+
+      const toComment = (comment: any): PlatformComment => ({
+        id: comment.id,
+        text: comment.snippet?.textDisplay || '',
+        createdAt: comment.snippet?.publishedAt,
+        author: {
+          name: comment.snippet?.authorDisplayName || 'YouTube user',
+          picture: comment.snippet?.authorProfileImageUrl,
+        },
+        own: comment.snippet?.authorChannelId?.value === id,
+        url: `https://www.youtube.com/watch?v=${postId}&lc=${comment.id}`,
+      });
+
+      // YouTube nests one level: answering a reply goes under its comment
+      return (data.items || []).flatMap((thread) => {
+        const top = thread.snippet?.topLevelComment;
+        if (!top?.id) {
+          return [];
+        }
+        return [
+          toComment(top),
+          ...(thread.replies?.comments || []).map((reply) => ({
+            ...toComment(reply),
+            parentId: top.id!,
+            replyToId: top.id!,
+          })),
+        ];
+      });
+    } catch (err: any) {
+      if (err?.response?.status === 401) {
+        throw new RefreshToken(
+          this.identifier,
+          JSON.stringify(err.response.data || {}),
+          '{}'
+        );
+      }
+      throw err;
+    }
+  }
+
+  async replyToComment(
+    id: string,
+    accessToken: string,
+    postId: string,
+    commentId: string,
+    message: string
+  ) {
+    try {
+      const { client, youtube } = clientAndYoutube();
+      client.setCredentials({ access_token: accessToken });
+
+      const { data } = await youtube(client).comments.insert({
+        part: ['snippet'],
+        requestBody: {
+          snippet: {
+            parentId: commentId,
+            textOriginal: message,
+          },
+        },
+      });
+
+      return {
+        id: data.id!,
+        url: `https://www.youtube.com/watch?v=${postId}&lc=${data.id}`,
+      };
+    } catch (err: any) {
+      if (err?.response?.status === 401) {
+        throw new RefreshToken(
+          this.identifier,
+          JSON.stringify(err.response.data || {}),
+          '{}'
+        );
+      }
+      throw err;
     }
   }
 

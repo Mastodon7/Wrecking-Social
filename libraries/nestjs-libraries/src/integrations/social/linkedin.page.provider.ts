@@ -1,6 +1,7 @@
 import {
   AnalyticsData,
   AuthTokenDetails,
+  PlatformComment,
   PostDetails,
   PostResponse,
   SocialProvider,
@@ -344,6 +345,108 @@ export class LinkedinPageProvider
       integration,
       'company'
     );
+  }
+
+  // Company pages only: reading comments on a member's own posts needs
+  // r_member_social, which LinkedIn does not grant to new apps
+  private commentHeaders(accessToken: string) {
+    return {
+      'LinkedIn-Version': '202601',
+      'X-Restli-Protocol-Version': '2.0.0',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    };
+  }
+
+  async listComments(
+    id: string,
+    accessToken: string,
+    postId: string,
+    integration: Integration
+  ): Promise<PlatformComment[]> {
+    const organization = `urn:li:organization:${id}`;
+    const load = async (urn: string): Promise<any[]> =>
+      (
+        await (
+          await this.fetch(
+            `https://api.linkedin.com/rest/socialActions/${encodeURIComponent(
+              urn
+            )}/comments?count=50`,
+            { headers: this.commentHeaders(accessToken) }
+          )
+        ).json()
+      ).elements || [];
+
+    const toComment = (comment: any): PlatformComment => {
+      const urn = comment.commentUrn || comment.$URN;
+      const own = comment.actor === organization;
+      return {
+        id: urn,
+        text: comment.message?.text || '',
+        createdAt: new Date(comment.created?.time || Date.now()).toISOString(),
+        author: {
+          // Members' names are not readable with the page scopes
+          name: own ? integration.name : 'LinkedIn member',
+          ...(own && integration.picture
+            ? { picture: integration.picture }
+            : {}),
+        },
+        own,
+        url: `https://www.linkedin.com/feed/update/${postId}?commentUrn=${encodeURIComponent(
+          urn
+        )}`,
+      };
+    };
+
+    const comments = await load(postId);
+
+    // LinkedIn nests one level: answering a reply goes under its comment.
+    // Replies are loaded for the 10 most recent comments that have any
+    const withReplies = comments
+      .filter((c) => c.commentsSummary?.totalFirstLevelComments > 0)
+      .slice(0, 10);
+    const replies = await Promise.all(
+      withReplies.map(async (comment) => {
+        const parent = comment.commentUrn || comment.$URN;
+        return (await load(parent)).map((reply) => ({
+          ...toComment(reply),
+          parentId: parent,
+          replyToId: parent,
+        }));
+      })
+    );
+
+    return [...comments.map(toComment), ...replies.flat()];
+  }
+
+  async replyToComment(
+    id: string,
+    accessToken: string,
+    postId: string,
+    commentId: string,
+    message: string
+  ) {
+    const data = await (
+      await this.fetch(
+        `https://api.linkedin.com/rest/socialActions/${encodeURIComponent(
+          commentId
+        )}/comments`,
+        {
+          method: 'POST',
+          headers: this.commentHeaders(accessToken),
+          body: JSON.stringify({
+            actor: `urn:li:organization:${id}`,
+            object: postId,
+            parentComment: commentId,
+            message: {
+              text: this.fixText(message),
+            },
+          }),
+        }
+      )
+    ).json();
+
+    return { id: data.commentUrn || data.$URN || '' };
   }
 
   async analytics(

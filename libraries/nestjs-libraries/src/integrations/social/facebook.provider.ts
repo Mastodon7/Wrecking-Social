@@ -3,10 +3,12 @@ import {
   AnalyticsData,
   AuthTokenDetails,
   PendingCheckResponse,
+  PlatformComment,
   PostDetails,
   PostResponse,
   SocialProvider,
 } from '@gitroom/nestjs-libraries/integrations/social/social.integrations.interface';
+import { makeId } from '@gitroom/nestjs-libraries/services/make.is';
 import { makeSecureId } from '@gitroom/nestjs-libraries/services/make.secure.id';
 import dayjs from 'dayjs';
 import {
@@ -1071,6 +1073,62 @@ export class FacebookProvider extends SocialAbstract implements SocialProvider {
         status: 'success',
       },
     ];
+  }
+
+  async listComments(
+    id: string,
+    accessToken: string,
+    postId: string
+  ): Promise<PlatformComment[]> {
+    const fields = 'id,message,created_time,from{id,name,picture},permalink_url';
+    const { data } = await (
+      await this.fetch(
+        `https://graph.facebook.com/${META_GRAPH_API_VERSION}/${postId}/comments?fields=${fields},comments.limit(25){${fields}}&order=reverse_chronological&limit=50&access_token=${accessToken}`,
+        {},
+        'list comments'
+      )
+    ).json();
+
+    const toComment = (comment: any): PlatformComment => ({
+      id: comment.id,
+      text: comment.message || '',
+      createdAt: comment.created_time,
+      author: {
+        name: comment.from?.name || 'Facebook user',
+        picture: comment.from?.picture?.data?.url,
+      },
+      own: !!comment.from?.id && comment.from.id === id,
+      url: comment.permalink_url,
+    });
+
+    // Facebook nests one level: answering a reply goes under its comment
+    return (data || []).flatMap((comment: any) => [
+      toComment(comment),
+      ...(comment.comments?.data || []).map((reply: any) => ({
+        ...toComment(reply),
+        parentId: comment.id,
+        replyToId: comment.id,
+      })),
+    ]);
+  }
+
+  async replyToComment(
+    id: string,
+    accessToken: string,
+    postId: string,
+    commentId: string,
+    message: string,
+    integration: Integration
+  ) {
+    const [reply] = await this.comment(
+      id,
+      postId,
+      commentId,
+      accessToken,
+      [{ id: makeId(10), message, settings: {} as FacebookDto, media: [] }],
+      integration
+    );
+    return { id: reply.postId, url: reply.releaseURL };
   }
 
   async analytics(

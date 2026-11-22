@@ -34,6 +34,7 @@ import {
   ResolveCommentDto,
 } from '@gitroom/nestjs-libraries/dtos/comments/add.comment.dto';
 import { RealIP } from 'nestjs-real-ip';
+import { ReplyPlatformCommentDto } from '@gitroom/nestjs-libraries/dtos/inbox/reply.platform.comment.dto';
 
 @ApiTags('Posts')
 @Controller('/posts')
@@ -150,6 +151,24 @@ export class PostsController {
     @Param('id') id?: string
   ) {
     return { date: await this._postsService.findFreeDateTime(org.id, id) };
+  }
+
+  // Comments people left on published posts, read from the platforms
+  @Get('/inbox')
+  async getInbox(
+    @GetOrgFromRequest() org: Organization,
+    @Query('refresh') refresh?: string
+  ) {
+    return this._postsService.getInbox(org.id, refresh === 'true');
+  }
+
+  @Post('/:id/inbox/reply')
+  async replyToPlatformComment(
+    @GetOrgFromRequest() org: Organization,
+    @Param('id') id: string,
+    @Body() body: ReplyPlatformCommentDto
+  ) {
+    return this._postsService.replyToPlatformComment(org.id, id, body);
   }
 
   @Get('/list')

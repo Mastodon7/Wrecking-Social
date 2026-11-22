@@ -2,6 +2,7 @@ import {
   AnalyticsData,
   AuthTokenDetails,
   PendingCheckResponse,
+  PlatformComment,
   PostDetails,
   PostResponse,
   SocialProvider,
@@ -1218,6 +1219,68 @@ export class InstagramProvider
         status: 'success',
       },
     ];
+  }
+
+  async listComments(
+    id: string,
+    token: string,
+    postId: string,
+    integration: Integration,
+    type = 'graph.facebook.com'
+  ): Promise<PlatformComment[]> {
+    const [accessToken] = token.split('___');
+    const fields = 'id,text,timestamp,username,from{id,username}';
+    const { data } = await (
+      await this.fetch(
+        `https://${type}/${META_GRAPH_API_VERSION}/${postId}/comments?fields=${fields},replies{${fields}}&limit=50&access_token=${accessToken}`
+      )
+    ).json();
+
+    const toComment = (comment: any): PlatformComment => ({
+      id: comment.id,
+      text: comment.text || '',
+      createdAt: comment.timestamp,
+      author: {
+        name: comment.username || comment.from?.username || 'Instagram user',
+        username: comment.username || comment.from?.username,
+      },
+      own:
+        comment.from?.id === id ||
+        (!!integration.profile && comment.username === integration.profile),
+    });
+
+    // Instagram nests one level: answering a reply goes under its comment
+    return (data || []).flatMap((comment: any) => [
+      toComment(comment),
+      ...(comment.replies?.data || []).map((reply: any) => ({
+        ...toComment(reply),
+        parentId: comment.id,
+        replyToId: comment.id,
+      })),
+    ]);
+  }
+
+  async replyToComment(
+    id: string,
+    token: string,
+    postId: string,
+    commentId: string,
+    message: string,
+    integration: Integration,
+    type = 'graph.facebook.com'
+  ) {
+    const [accessToken] = token.split('___');
+    const { id: replyId } = await (
+      await this.fetch(
+        `https://${type}/${META_GRAPH_API_VERSION}/${commentId}/replies?message=${encodeURIComponent(
+          message
+        )}&access_token=${accessToken}`,
+        {
+          method: 'POST',
+        }
+      )
+    ).json();
+    return { id: replyId };
   }
 
   private setTitle(name: string) {

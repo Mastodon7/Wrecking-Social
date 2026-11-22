@@ -89,6 +89,23 @@ export interface AnalyticsData {
 }
 
 
+// A comment or reply someone left on a published post, read from the
+// platform when the inbox is opened (never stored)
+export type PlatformComment = {
+  id: string; // The platform's id of the comment
+  parentId?: string; // Set on a reply to another comment
+  replyToId?: string; // The id replyToComment needs to answer this comment, for platforms that only nest one level (defaults to id)
+  text: string;
+  createdAt: string; // ISO date
+  author: {
+    name: string;
+    username?: string;
+    picture?: string;
+  };
+  own?: boolean; // Left by the connected channel itself
+  url?: string; // Link to the comment on the platform
+};
+
 export type GenerateAuthUrlResponse = {
   url: string;
   codeVerifier: string;
@@ -282,4 +299,21 @@ export interface SocialProvider
     accessToken: string,
     data: any
   ): Promise<FetchPageInformationResult>;
+  // Comments and replies other people left on a published post (postId is
+  // the stored releaseId), newest first. Read on demand for the inbox
+  listComments?(
+    id: string,
+    accessToken: string,
+    postId: string,
+    integration: Integration
+  ): Promise<PlatformComment[]>;
+  // Answers a comment returned by listComments, as the connected channel
+  replyToComment?(
+    id: string,
+    accessToken: string,
+    postId: string,
+    commentId: string,
+    message: string,
+    integration: Integration
+  ): Promise<{ id: string; url?: string }>;
 }
