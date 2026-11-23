@@ -1,5 +1,6 @@
 'use client';
 
+import { platformName } from '@gitroom/frontend/components/ui/platform.name';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import useSWR from 'swr';
 import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
@@ -172,7 +173,7 @@ const BrandVoiceComponent = () => {
           <VoiceRow
             key={channel.id}
             id={channel.id}
-            label={channel.name}
+            label={`${channel.name} · ${platformName(channel.identifier)}`}
             hint={`Optional. Its own voice for ${channel.identifier.split('-')[0]}`}
             voice={find(channel.id)}
             aiConfigured={!!data?.aiConfigured}

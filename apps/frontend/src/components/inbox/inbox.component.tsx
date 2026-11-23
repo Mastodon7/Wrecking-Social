@@ -1,5 +1,6 @@
 'use client';
 
+import { platformName } from '@gitroom/frontend/components/ui/platform.name';
 import useSWR from 'swr';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { uniqBy } from 'lodash';
@@ -491,7 +492,7 @@ export const Inbox = () => {
           <option value="all">All channels</option>
           {channels.map((c) => (
             <option key={c.id} value={c.id}>
-              {c.name}
+              {c.name} · {platformName(c.providerIdentifier)}
             </option>
           ))}
         </select>
