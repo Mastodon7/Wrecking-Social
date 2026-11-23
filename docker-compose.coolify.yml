@@ -41,7 +41,7 @@ services:
       # Platforms not offered on the add-channel screen. Keep it in step with
       # the homepage and the privacy policy: only platforms we have an app for.
       # Remove one from this list once its app is set up and approved
-      HIDDEN_PROVIDERS: ${HIDDEN_PROVIDERS:-x,reddit,mastodon,discord,slack,telegram,dribbble,kick,twitch,lemmy,wrapcast,nostr,vk,medium,devto,hashnode,wordpress,listmonk,moltbook,whop,skool,mewe,tumblr}
+      HIDDEN_PROVIDERS: ${HIDDEN_PROVIDERS:-reddit,mastodon,discord,slack,telegram,dribbble,kick,twitch,lemmy,wrapcast,nostr,vk,medium,devto,hashnode,wordpress,listmonk,moltbook,whop,skool,mewe,tumblr}
       DISABLE_REGISTRATION: ${DISABLE_REGISTRATION:-false}
       STORAGE_PROVIDER: local
       UPLOAD_DIRECTORY: /uploads
