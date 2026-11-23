@@ -46,7 +46,7 @@ export class FacebookProvider extends SocialAbstract implements SocialProvider {
   // Instagram connected through Facebook login uses the same Meta app, so
   // this app's deauthorize / data deletion callbacks remove it too
   callbackProviders = ['facebook', 'instagram'];
-  name = 'Facebook Page';
+  name = 'Facebook\n(Business Page)';
   isBetweenSteps = true;
   scopes = [
     'pages_show_list',

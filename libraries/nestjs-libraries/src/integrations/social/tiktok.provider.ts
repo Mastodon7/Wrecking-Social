@@ -37,7 +37,7 @@ import { DashboardFunction } from '@gitroom/nestjs-libraries/integrations/dashbo
 )
 export class TiktokProvider extends SocialAbstract implements SocialProvider {
   identifier = 'tiktok';
-  name = 'Tiktok';
+  name = 'TikTok\n(Personal)';
   isBetweenSteps = false;
   convertToJPEG = true;
   scopes = [
