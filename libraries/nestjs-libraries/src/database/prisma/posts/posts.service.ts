@@ -25,6 +25,7 @@ import { IntegrationService } from '@gitroom/nestjs-libraries/database/prisma/in
 import { makeId } from '@gitroom/nestjs-libraries/services/make.is';
 import utc from 'dayjs/plugin/utc';
 import { MediaService } from '@gitroom/nestjs-libraries/database/prisma/media/media.service';
+import { LinkToolsService } from '@gitroom/nestjs-libraries/database/prisma/link-tools/link-tools.service';
 import { ShortLinkService } from '@gitroom/nestjs-libraries/short-linking/short.link.service';
 import { CreateTagDto } from '@gitroom/nestjs-libraries/dtos/posts/create.tag.dto';
 import {
@@ -78,6 +79,7 @@ export class PostsService {
     private _integrationService: IntegrationService,
     private _mediaService: MediaService,
     private _shortLinkService: ShortLinkService,
+    private _linkToolsService: LinkToolsService,
     private _openaiService: OpenaiService,
     private _temporalService: TemporalService,
     private _refreshIntegrationService: RefreshIntegrationService
@@ -1406,7 +1408,16 @@ export class PostsService {
       );
       const removeLinks = !!provider?.stripLinks?.();
 
-      const messages = (post.value || []).map((p) => p.content);
+      // our own links get UTM tags (when turned on) before any short link,
+      // so the short link points at the tagged address
+      const messages =
+        body.type === 'draft' || removeLinks
+          ? (post.value || []).map((p) => p.content)
+          : await this._linkToolsService.applyUtm(
+              orgId,
+              (post.settings as any)?.__type || '',
+              (post.value || []).map((p) => p.content)
+            );
       // No point shortlinking links on platforms that strip them out anyway
       const updateContent =
         !body.shortLink || removeLinks
