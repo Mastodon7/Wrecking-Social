@@ -24,6 +24,7 @@ export class IntegrationRepository {
     private _customers: PrismaRepository<'customer'>,
     private _mentions: PrismaRepository<'mentions'>,
     private _metrics: PrismaRepository<'postMetricSnapshot'>,
+    private _inboxStates: PrismaRepository<'inboxCommentState'>,
     private _encryptionService: EncryptionService
   ) {}
 
@@ -1024,6 +1025,7 @@ export class IntegrationRepository {
     integrationId?: string;
   }) {
     await this._metrics.model.postMetricSnapshot.deleteMany({ where });
+    await this._inboxStates.model.inboxCommentState.deleteMany({ where });
 
     return this._posts.model.post.updateMany({
       where: {

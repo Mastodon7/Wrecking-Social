@@ -37,6 +37,7 @@ import { WebhooksRepository } from '@gitroom/nestjs-libraries/database/prisma/we
 import { WebhooksService } from '@gitroom/nestjs-libraries/database/prisma/webhooks/webhooks.service';
 import { SignatureRepository } from '@gitroom/nestjs-libraries/database/prisma/signatures/signature.repository';
 import { SignatureService } from '@gitroom/nestjs-libraries/database/prisma/signatures/signature.service';
+import { InboxToolsService } from '@gitroom/nestjs-libraries/database/prisma/inbox-tools/inbox-tools.service';
 import { InsightsRepository } from '@gitroom/nestjs-libraries/database/prisma/insights/insights.repository';
 import { InsightsService } from '@gitroom/nestjs-libraries/database/prisma/insights/insights.service';
 import { LinkToolsRepository } from '@gitroom/nestjs-libraries/database/prisma/link-tools/link-tools.repository';
@@ -92,6 +93,7 @@ import { AdminStatsService } from '@gitroom/nestjs-libraries/database/prisma/adm
     AutopostRepository,
     AutopostService,
     SignatureService,
+    InboxToolsService,
     InsightsRepository,
     InsightsService,
     LinkToolsRepository,

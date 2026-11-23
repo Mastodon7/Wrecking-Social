@@ -11,6 +11,21 @@ import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
 import { Button } from '@gitroom/react/form/button';
 import { useToaster } from '@gitroom/react/toaster/toaster';
 import { LoadingComponent } from '@gitroom/frontend/components/layout/loading';
+import { useModals } from '@gitroom/frontend/components/layout/new-modal';
+import { useUser } from '@gitroom/frontend/components/layout/user.context';
+import {
+  CommentState,
+  ReplySettings,
+  stateKey,
+  TeamMember,
+  useInboxKnowledge,
+  useInboxStates,
+  useInboxTeam,
+  useSavedReplies,
+} from '@gitroom/frontend/components/inbox/inbox.tools';
+
+// Comments from Google APIs (YouTube) are never sent to an AI provider
+const NO_AI = ['youtube', 'gmb'];
 
 interface InboxChannel {
   id: string;
@@ -56,6 +71,38 @@ const ReplyBox: FC<{ comment: InboxComment; onSent: () => void }> = ({
   const toaster = useToaster();
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
+  const [drafting, setDrafting] = useState(false);
+  const { data: savedReplies } = useSavedReplies();
+  const { data: knowledge } = useInboxKnowledge();
+  const canDraft =
+    !!knowledge?.aiConfigured &&
+    !NO_AI.includes(comment.integration.providerIdentifier);
+
+  const draft = useCallback(async () => {
+    setDrafting(true);
+    const response = await fetch('/inbox-tools/draft', {
+      method: 'POST',
+      body: JSON.stringify({
+        integrationId: comment.integration.id,
+        commentText: comment.text,
+        authorName: comment.author.name,
+        postPreview: comment.post.preview,
+      }),
+    });
+    setDrafting(false);
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      toaster.show(body?.message || 'Could not draft a reply', 'warning');
+      return;
+    }
+    setMessage(body.reply || '');
+    if (body.needsHuman) {
+      toaster.show(
+        'This one may need a personal answer. Check the draft before sending.',
+        'warning'
+      );
+    }
+  }, [comment]);
 
   const send = useCallback(async () => {
     if (!message.trim()) {
@@ -89,7 +136,31 @@ const ReplyBox: FC<{ comment: InboxComment; onSent: () => void }> = ({
         maxLength={2000}
         className="bg-input min-h-[90px] p-[12px] outline-none border-fifth border rounded-[4px] text-inputText placeholder-inputText"
       />
-      <div className="flex justify-end">
+      <div className="flex flex-wrap items-center justify-end gap-[8px]">
+        {!!savedReplies?.length && (
+          <select
+            value=""
+            onChange={(e) => {
+              const reply = savedReplies.find((r) => r.id === e.target.value);
+              if (reply) {
+                setMessage(reply.content);
+              }
+            }}
+            className="bg-input h-[40px] px-[10px] outline-none border-fifth border rounded-[4px] text-inputText text-[14px]"
+          >
+            <option value="">Use a saved reply…</option>
+            {savedReplies.map((r) => (
+              <option key={r.id} value={r.id}>
+                {r.title}
+              </option>
+            ))}
+          </select>
+        )}
+        {canDraft && (
+          <Button onClick={draft} loading={drafting} secondary={true}>
+            ✦ Draft with AI
+          </Button>
+        )}
         <Button onClick={send} loading={sending} disabled={!message.trim()}>
           Send reply
         </Button>
@@ -101,12 +172,21 @@ const ReplyBox: FC<{ comment: InboxComment; onSent: () => void }> = ({
 const CommentRow: FC<{
   comment: InboxComment;
   parentName?: string;
+  state?: CommentState;
+  team: TeamMember[];
+  onState: (change: { done?: boolean; assignedToId?: string | null }) => void;
   onSent: () => void;
-}> = ({ comment, parentName, onSent }) => {
+}> = ({ comment, parentName, state, team, onState, onSent }) => {
   const [replying, setReplying] = useState(false);
+  const done = !!state?.done;
 
   return (
-    <div className="flex gap-[12px] p-[16px] rounded-[8px] bg-newBgColor border border-newTableBorder">
+    <div
+      className={clsx(
+        'flex gap-[12px] p-[16px] rounded-[8px] bg-newBgColor border border-newTableBorder',
+        done && 'opacity-60'
+      )}
+    >
       <div className="relative shrink-0 w-[40px] h-[40px]">
         <ImageWithFallback
           fallbackSrc="/no-picture.jpg"
@@ -141,6 +221,11 @@ const CommentRow: FC<{
             {dayjs(comment.createdAt).format('MMM D, YYYY h:mm A')}
           </span>
           <span className="text-textItemBlur">· {comment.integration.name}</span>
+          {done && (
+            <span className="text-[11px] px-[6px] py-[1px] rounded-[4px] bg-green-600/20 text-green-500">
+              Done
+            </span>
+          )}
         </div>
         {!!comment.parentId && (
           <div className="text-[12px] text-textItemBlur">
@@ -165,7 +250,7 @@ const CommentRow: FC<{
             comment.post.preview
           )}
         </div>
-        <div className="flex gap-[16px] text-[13px]">
+        <div className="flex flex-wrap items-center gap-x-[16px] gap-y-[6px] text-[13px]">
           <button
             type="button"
             className="text-primary hover:underline"
@@ -173,6 +258,30 @@ const CommentRow: FC<{
           >
             {replying ? 'Cancel' : 'Reply'}
           </button>
+          {!comment.own && (
+            <button
+              type="button"
+              className="text-textItemBlur hover:underline"
+              onClick={() => onState({ done: !done })}
+            >
+              {done ? 'Reopen' : 'Mark done'}
+            </button>
+          )}
+          {!comment.own && team.length > 1 && (
+            <select
+              aria-label="Assign to"
+              value={state?.assignedToId || ''}
+              onChange={(e) => onState({ assignedToId: e.target.value || null })}
+              className="bg-transparent text-textItemBlur outline-none cursor-pointer"
+            >
+              <option value="">Unassigned</option>
+              {team.map((m) => (
+                <option key={m.id} value={m.id}>
+                  Assigned to {m.name}
+                </option>
+              ))}
+            </select>
+          )}
           {!!comment.url && (
             <a
               href={comment.url}
@@ -189,6 +298,10 @@ const CommentRow: FC<{
             comment={comment}
             onSent={() => {
               setReplying(false);
+              // answering a comment handles it
+              if (!comment.own) {
+                onState({ done: true });
+              }
               onSent();
             }}
           />
@@ -200,10 +313,74 @@ const CommentRow: FC<{
 
 export const Inbox = () => {
   const fetch = useFetch();
+  const toaster = useToaster();
+  const modals = useModals();
+  const user = useUser();
   const { data, isLoading, mutate } = useInbox();
+  const { data: stateList, mutate: mutateStates } = useInboxStates();
+  const { data: team } = useInboxTeam();
   const [channel, setChannel] = useState('all');
   const [hideOwn, setHideOwn] = useState(true);
+  const [status, setStatus] = useState<'open' | 'done' | 'all'>('open');
+  const [assignee, setAssignee] = useState('anyone');
   const [refreshing, setRefreshing] = useState(false);
+
+  const states = useMemo(
+    () =>
+      Object.fromEntries(
+        (stateList || []).map((s) => [stateKey(s.integrationId, s.commentId), s])
+      ) as Record<string, CommentState>,
+    [stateList]
+  );
+
+  const changeState = useCallback(
+    async (
+      comment: InboxComment,
+      change: { done?: boolean; assignedToId?: string | null }
+    ) => {
+      const key = stateKey(comment.integration.id, comment.id);
+      const previous = states[key];
+      const next: CommentState = {
+        integrationId: comment.integration.id,
+        commentId: comment.id,
+        done: change.done ?? previous?.done ?? false,
+        assignedToId:
+          change.assignedToId !== undefined
+            ? change.assignedToId
+            : previous?.assignedToId ?? null,
+      };
+      await mutateStates(
+        [
+          ...(stateList || []).filter(
+            (s) => stateKey(s.integrationId, s.commentId) !== key
+          ),
+          next,
+        ],
+        { revalidate: false }
+      );
+      const response = await fetch('/inbox-tools/state', {
+        method: 'POST',
+        body: JSON.stringify({
+          integrationId: comment.integration.id,
+          commentId: comment.id,
+          ...change,
+        }),
+      });
+      if (!response.ok) {
+        toaster.show('Could not save that change', 'warning');
+        mutateStates();
+      }
+    },
+    [states, stateList]
+  );
+
+  const openSettings = useCallback(() => {
+    modals.openModal({
+      title: 'Reply settings',
+      withCloseButton: true,
+      children: () => <ReplySettings />,
+    });
+  }, []);
 
   const refresh = useCallback(async () => {
     setRefreshing(true);
@@ -233,12 +410,29 @@ export const Inbox = () => {
 
   const comments = useMemo(
     () =>
-      (data?.comments || []).filter(
-        (c) =>
+      (data?.comments || []).filter((c) => {
+        const state = states[stateKey(c.integration.id, c.id)];
+        const isDone = !!state?.done;
+        const owner = state?.assignedToId || null;
+        return (
           (channel === 'all' || c.integration.id === channel) &&
-          (!hideOwn || !c.own)
-      ),
-    [data, channel, hideOwn]
+          (!hideOwn || !c.own) &&
+          (status === 'all' || c.own || (status === 'done') === isDone) &&
+          (assignee === 'anyone' ||
+            (assignee === 'me' && owner === user?.id) ||
+            (assignee === 'unassigned' && !owner) ||
+            owner === assignee)
+        );
+      }),
+    [data, channel, hideOwn, status, assignee, states, user?.id]
+  );
+
+  const openCount = useMemo(
+    () =>
+      (data?.comments || []).filter(
+        (c) => !c.own && !states[stateKey(c.integration.id, c.id)]?.done
+      ).length,
+    [data, states]
   );
 
   if (isLoading) {
@@ -252,7 +446,43 @@ export const Inbox = () => {
   return (
     <div className="bg-newBgColorInner flex-1 flex flex-col p-[20px] mobile:p-[12px] gap-[16px]">
       <div className="flex flex-wrap items-center gap-[12px]">
-        <h2 className="flex-1 text-[20px] font-[500]">Inbox</h2>
+        <h2 className="flex-1 text-[20px] font-[500]">
+          Inbox
+          {!!openCount && (
+            <span className="ms-[8px] text-[14px] text-textItemBlur">
+              {openCount} open
+            </span>
+          )}
+        </h2>
+        <select
+          aria-label="Status"
+          value={status}
+          onChange={(e) => setStatus(e.target.value as any)}
+          className="bg-input h-[40px] px-[12px] outline-none border-fifth border rounded-[4px] text-inputText"
+        >
+          <option value="open">Open</option>
+          <option value="done">Done</option>
+          <option value="all">All</option>
+        </select>
+        {(team?.length || 0) > 1 && (
+          <select
+            aria-label="Assigned to"
+            value={assignee}
+            onChange={(e) => setAssignee(e.target.value)}
+            className="bg-input h-[40px] px-[12px] outline-none border-fifth border rounded-[4px] text-inputText"
+          >
+            <option value="anyone">Anyone</option>
+            <option value="me">Assigned to me</option>
+            <option value="unassigned">Unassigned</option>
+            {team!
+              .filter((m) => m.id !== user?.id)
+              .map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.name}
+                </option>
+              ))}
+          </select>
+        )}
         <select
           value={channel}
           onChange={(e) => setChannel(e.target.value)}
@@ -273,6 +503,9 @@ export const Inbox = () => {
           />
           Hide my replies
         </label>
+        <Button onClick={openSettings} secondary={true}>
+          Reply settings
+        </Button>
         <Button onClick={refresh} loading={refreshing} secondary={true}>
           Refresh
         </Button>
@@ -291,10 +524,15 @@ export const Inbox = () => {
       )}
       {!comments.length ? (
         <div className="flex-1 flex flex-col items-center justify-center text-center gap-[8px] py-[60px]">
-          <div className="text-[20px]">No comments yet</div>
+          <div className="text-[20px]">
+            {data?.comments?.length && status === 'open'
+              ? 'All caught up'
+              : 'No comments here'}
+          </div>
           <div className="text-[14px] text-textItemBlur">
-            When people comment on your published posts, their comments show
-            up here and you can answer them without leaving Wrecking Social.
+            {data?.comments?.length
+              ? 'Nothing matches these filters. Switch to All to see every comment.'
+              : 'When people comment on your published posts, their comments show up here and you can answer them without leaving Wrecking Social.'}
           </div>
         </div>
       ) : (
@@ -304,6 +542,9 @@ export const Inbox = () => {
               key={`${comment.integration.id}_${comment.id}`}
               comment={comment}
               parentName={comment.parentId ? names[comment.parentId] : undefined}
+              state={states[stateKey(comment.integration.id, comment.id)]}
+              team={team || []}
+              onState={(change) => changeState(comment, change)}
               onSent={() => mutate()}
             />
           ))}
