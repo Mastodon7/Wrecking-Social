@@ -60,6 +60,7 @@ import { FarcasterProvider } from '@gitroom/backend/services/auth/providers/farc
 import { WalletProvider } from '@gitroom/backend/services/auth/providers/wallet.provider';
 import { OauthProvider } from '@gitroom/backend/services/auth/providers/oauth.provider';
 import { StripeController } from '@gitroom/backend/api/routes/stripe.controller';
+import { ApprovalsController } from '@gitroom/backend/api/routes/approvals.controller';
 import { PlatformCallbacksController } from '@gitroom/backend/api/routes/platform.callbacks.controller';
 
 const authenticatedController = [
@@ -77,6 +78,7 @@ const authenticatedController = [
   CopilotController,
   BrandVoiceController,
   WebhookController,
+  ApprovalsController,
   SignatureController,
   InboxToolsController,
   AutopostController,

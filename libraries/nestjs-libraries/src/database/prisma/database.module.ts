@@ -57,6 +57,7 @@ import { AnnouncementsRepository } from '@gitroom/nestjs-libraries/database/pris
 import { AnnouncementsService } from '@gitroom/nestjs-libraries/database/prisma/announcements/announcements.service';
 import { ErrorsRepository } from '@gitroom/nestjs-libraries/database/prisma/errors/errors.repository';
 import { ErrorsService } from '@gitroom/nestjs-libraries/database/prisma/errors/errors.service';
+import { ApprovalsService } from '@gitroom/nestjs-libraries/database/prisma/approvals/approvals.service';
 import { AdminStatsRepository } from '@gitroom/nestjs-libraries/database/prisma/admin-stats/admin-stats.repository';
 import { AdminStatsService } from '@gitroom/nestjs-libraries/database/prisma/admin-stats/admin-stats.service';
 import { BrandVoiceService } from '@gitroom/nestjs-libraries/database/prisma/brand-voice/brand-voice.service';
@@ -79,6 +80,7 @@ import { BrandVoiceService } from '@gitroom/nestjs-libraries/database/prisma/bra
     NotificationsRepository,
     WebhooksRepository,
     WebhooksService,
+    ApprovalsService,
     IntegrationService,
     IntegrationRepository,
     PostsService,
