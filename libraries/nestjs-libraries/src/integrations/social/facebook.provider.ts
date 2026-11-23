@@ -316,6 +316,15 @@ export class FacebookProvider extends SocialAbstract implements SocialProvider {
 
   async generateAuthUrl() {
     const state = makeSecureId(6);
+    // Facebook Login for Business: a configuration (Meta dashboard, User
+    // access token type) carries the permissions and the asset selection.
+    // Unset keeps the classic scope-only dialog. FACEBOOK_LOGIN_OMIT_SCOPE
+    // drops the scope list when a configuration is used, in case Meta rejects
+    // both together. Only this Pages connector reads these; Instagram through
+    // Facebook needs a configuration of its own.
+    const configId = (process.env.FACEBOOK_LOGIN_CONFIG_ID || '').trim();
+    const sendScope =
+      !configId || process.env.FACEBOOK_LOGIN_OMIT_SCOPE !== 'true';
     return {
       url:
         `https://www.facebook.com/${META_GRAPH_API_VERSION}/dialog/oauth` +
@@ -324,7 +333,8 @@ export class FacebookProvider extends SocialAbstract implements SocialProvider {
           `${process.env.FRONTEND_URL}/integrations/social/facebook`
         )}` +
         `&state=${state}` +
-        `&scope=${this.scopes.join(',')}`,
+        (configId ? `&config_id=${encodeURIComponent(configId)}` : '') +
+        (sendScope ? `&scope=${this.scopes.join(',')}` : ''),
       codeVerifier: makeSecureId(10),
       state,
     };
