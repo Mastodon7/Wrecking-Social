@@ -26,6 +26,7 @@ import { useUppyUploader } from '@gitroom/frontend/components/media/new.uploader
 import dynamic from 'next/dynamic';
 import { useUser } from '@gitroom/frontend/components/layout/user.context';
 import { AiImage } from '@gitroom/frontend/components/launches/ai.image';
+import { AiCarousel } from '@gitroom/frontend/components/launches/ai.carousel';
 import { DropFiles } from '@gitroom/frontend/components/layout/drop.files';
 import { deleteDialog } from '@gitroom/react/helpers/delete.dialog';
 import { useT } from '@gitroom/react/translation/get.transation.service.client';
@@ -997,6 +998,9 @@ export const MultiMediaComponent: FC<{
                     <AiImage value={text} onChange={changeMedia} />
                     {!insertInContent && (
                       <AiVideo value={text} onChange={changeMedia} />
+                    )}
+                    {!insertInContent && (
+                      <AiCarousel value={text} onChange={changeMedia} />
                     )}
                   </>
                 )}
