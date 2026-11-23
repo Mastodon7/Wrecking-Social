@@ -6,6 +6,7 @@ import dayjs from 'dayjs';
 import { useCallback, useState } from 'react';
 import { SelectCustomer } from '@gitroom/frontend/components/launches/select.customer';
 import { ApprovalsButton } from '@gitroom/frontend/components/approvals/approvals';
+import { ContentToolsButton } from '@gitroom/frontend/components/content-tools/content.tools';
 import { usePostActions } from '@gitroom/frontend/components/launches/calendar';
 import { SelectChannels } from '@gitroom/frontend/components/launches/select.channels';
 import { useT } from '@gitroom/react/translation/get.transation.service.client';
@@ -452,6 +453,10 @@ export const Filters = () => {
         <SelectChannels />
       </div>
       <ApprovalsButton openPost={(post) => editPost(post)()} />
+      <ContentToolsButton
+        integrations={calendar.integrations}
+        onCreated={calendar.reloadCalendarView}
+      />
       {calendar.integrations.length > 1 && (
         <div
           onClick={() => setFiltersOpen(true)}

@@ -59,6 +59,7 @@ import { ErrorsRepository } from '@gitroom/nestjs-libraries/database/prisma/erro
 import { ErrorsService } from '@gitroom/nestjs-libraries/database/prisma/errors/errors.service';
 import { ApprovalsService } from '@gitroom/nestjs-libraries/database/prisma/approvals/approvals.service';
 import { AdminStatsRepository } from '@gitroom/nestjs-libraries/database/prisma/admin-stats/admin-stats.repository';
+import { ContentToolsService } from '@gitroom/nestjs-libraries/database/prisma/content-tools/content-tools.service';
 import { AdminStatsService } from '@gitroom/nestjs-libraries/database/prisma/admin-stats/admin-stats.service';
 import { BrandVoiceService } from '@gitroom/nestjs-libraries/database/prisma/brand-voice/brand-voice.service';
 
@@ -85,6 +86,7 @@ import { BrandVoiceService } from '@gitroom/nestjs-libraries/database/prisma/bra
     IntegrationRepository,
     PostsService,
     PostsRepository,
+    ContentToolsService,
     StripeService,
     PaymentService,
     PaymentProviderManager,
