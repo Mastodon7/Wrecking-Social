@@ -1,5 +1,6 @@
 'use client';
 
+import { platformName } from '@gitroom/frontend/components/ui/platform.name';
 import React, { FC, useCallback, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import { uniqBy } from 'lodash';
@@ -136,7 +137,12 @@ export const SelectChannels: FC<{
                 src={p.picture || '/no-picture.jpg'}
                 alt=""
               />
-              <div className="truncate">{p.name}</div>
+              <div className="truncate">
+                {p.name}
+                <span className="text-textItemBlur">
+                  {' '}· {platformName(p.identifier)}
+                </span>
+              </div>
             </div>
           ))}
         </div>

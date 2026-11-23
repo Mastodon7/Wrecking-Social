@@ -1,5 +1,6 @@
 'use client';
 
+import { platformName } from '@gitroom/frontend/components/ui/platform.name';
 import {
   AddProviderButton,
   CustomVariables,
@@ -451,7 +452,12 @@ export const MenuComponent: FC<
           integration.disabled && 'opacity-50'
         )}
       >
-        {integration.name}
+<div className="flex flex-col leading-[1.2] min-w-0">
+          <span className="truncate">{integration.name}</span>
+          <span className="truncate text-[11px] text-textItemBlur">
+            {platformName(integration.identifier)}
+          </span>
+        </div>
       </div>
       <Menu
         canChangeProfilePicture={integration.changeProfilePicture}

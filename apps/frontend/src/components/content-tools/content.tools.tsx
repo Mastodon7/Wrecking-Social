@@ -1,5 +1,6 @@
 'use client';
 
+import { platformName } from '@gitroom/frontend/components/ui/platform.name';
 import useSWR from 'swr';
 import { FC, useCallback, useMemo, useState } from 'react';
 import clsx from 'clsx';
@@ -430,6 +431,7 @@ const Repurpose: FC<{ channels: Channel[]; onDone: () => void }> = ({ channels, 
                 }
               />
               {c.name}
+              <span className="text-textItemBlur">· {platformName(c.identifier)}</span>
             </label>
           ))}
         </div>

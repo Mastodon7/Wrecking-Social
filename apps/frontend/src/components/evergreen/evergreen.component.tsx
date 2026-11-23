@@ -1,5 +1,6 @@
 'use client';
 
+import { platformName } from '@gitroom/frontend/components/ui/platform.name';
 import useSWR from 'swr';
 import { FC, useCallback, useState } from 'react';
 import clsx from 'clsx';
@@ -121,6 +122,7 @@ const CategoryForm: FC<{
               onChange={(e) => setPicked((p) => (e.target.checked ? [...p, c.id] : p.filter((x) => x !== c.id)))}
             />
             {c.name}
+            <span className="text-textItemBlur">· {platformName(c.identifier)}</span>
           </label>
         ))}
       </div>
