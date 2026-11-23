@@ -4,6 +4,7 @@ import { OrganizationRepository } from '@gitroom/nestjs-libraries/database/prism
 import { OrganizationService } from '@gitroom/nestjs-libraries/database/prisma/organizations/organization.service';
 import { UsersService } from '@gitroom/nestjs-libraries/database/prisma/users/users.service';
 import { UsersRepository } from '@gitroom/nestjs-libraries/database/prisma/users/users.repository';
+import { ReportsService } from '@gitroom/nestjs-libraries/database/prisma/reports/reports.service';
 import { SubscriptionService } from '@gitroom/nestjs-libraries/database/prisma/subscriptions/subscription.service';
 import { SubscriptionRepository } from '@gitroom/nestjs-libraries/database/prisma/subscriptions/subscription.repository';
 import { NotificationService } from '@gitroom/nestjs-libraries/database/prisma/notifications/notification.service';
@@ -72,6 +73,7 @@ import { BrandVoiceService } from '@gitroom/nestjs-libraries/database/prisma/bra
     PrismaTransaction,
     UsersService,
     UsersRepository,
+    ReportsService,
     OrganizationService,
     OrganizationRepository,
     SubscriptionService,
