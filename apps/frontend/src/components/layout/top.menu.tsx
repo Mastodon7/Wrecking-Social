@@ -103,6 +103,26 @@ export const useMenuItem = () => {
       path: '/insights',
     },
     {
+      name: 'Evergreen',
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+        >
+          <path
+            d="M12 2 6 10h3l-4 6h5v6h4v-6h5l-4-6h3l-6-8Z"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinejoin="round"
+          />
+        </svg>
+      ),
+      path: '/evergreen',
+    },
+    {
       name: t('media', 'Media'),
       icon: (
         <svg

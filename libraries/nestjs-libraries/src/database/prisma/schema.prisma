@@ -22,6 +22,7 @@ model Organization {
   isTrailing          Boolean              @default(false)
   shortlink           ShortLinkPreference  @default(ASK)
   autoPost            AutoPost[]
+  evergreenCategories EvergreenCategory[]
   Comments            Comments[]
   credits             Credits[]
   clippings           Clipping[]
@@ -402,6 +403,59 @@ model BrandVoice {
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@unique([organizationId, integrationId])
+}
+
+// Evergreen library: a category of reusable posts and when it goes out.
+// days are ISO weekdays (1 = Monday ... 7 = Sunday), time is HH:mm in timezone
+model EvergreenCategory {
+  id             String           @id @default(cuid())
+  organizationId String
+  name           String
+  days           String           @default("2,4")
+  time           String           @default("11:00")
+  timezone       String           @default("UTC")
+  integrationIds String[]
+  active         Boolean          @default(true)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  deletedAt      DateTime?
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  items          EvergreenItem[]
+  runs           EvergreenRun[]
+
+  @@index([organizationId, deletedAt])
+}
+
+model EvergreenItem {
+  id             String            @id @default(cuid())
+  organizationId String
+  categoryId     String
+  text           String
+  active         Boolean           @default(true)
+  useCount       Int               @default(0)
+  lastUsedAt     DateTime?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  deletedAt      DateTime?
+  category       EvergreenCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@index([categoryId, deletedAt])
+}
+
+// One filled slot, so a slot is never filled twice
+model EvergreenRun {
+  id             String            @id @default(cuid())
+  organizationId String
+  categoryId     String
+  slot           DateTime
+  itemId         String
+  postGroup      String?
+  asDraft        Boolean           @default(false)
+  createdAt      DateTime          @default(now())
+  category       EvergreenCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([categoryId, slot])
+  @@index([organizationId, slot])
 }
 
 model Customer {

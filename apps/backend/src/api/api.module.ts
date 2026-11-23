@@ -40,6 +40,7 @@ import { InboxToolsController } from '@gitroom/backend/api/routes/inbox-tools.co
 import { AutopostController } from '@gitroom/backend/api/routes/autopost.controller';
 import { SetsController } from '@gitroom/backend/api/routes/sets.controller';
 import { ThirdPartyController } from '@gitroom/backend/api/routes/third-party.controller';
+import { EvergreenController } from '@gitroom/backend/api/routes/evergreen.controller';
 import { MonitorController } from '@gitroom/backend/api/routes/monitor.controller';
 import { ContentToolsController } from '@gitroom/backend/api/routes/content-tools.controller';
 import { NoAuthIntegrationsController } from '@gitroom/backend/api/routes/no.auth.integrations.controller';
@@ -86,6 +87,7 @@ const authenticatedController = [
   SetsController,
   ContentToolsController,
   ThirdPartyController,
+  EvergreenController,
   OAuthAppController,
   ApprovedAppsController,
   OAuthAuthorizedController,

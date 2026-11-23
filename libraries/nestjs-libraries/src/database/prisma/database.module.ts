@@ -56,6 +56,7 @@ import { OAuthService } from '@gitroom/nestjs-libraries/database/prisma/oauth/oa
 import { AnnouncementsRepository } from '@gitroom/nestjs-libraries/database/prisma/announcements/announcements.repository';
 import { AnnouncementsService } from '@gitroom/nestjs-libraries/database/prisma/announcements/announcements.service';
 import { ErrorsRepository } from '@gitroom/nestjs-libraries/database/prisma/errors/errors.repository';
+import { EvergreenService } from '@gitroom/nestjs-libraries/database/prisma/evergreen/evergreen.service';
 import { ErrorsService } from '@gitroom/nestjs-libraries/database/prisma/errors/errors.service';
 import { ApprovalsService } from '@gitroom/nestjs-libraries/database/prisma/approvals/approvals.service';
 import { AdminStatsRepository } from '@gitroom/nestjs-libraries/database/prisma/admin-stats/admin-stats.repository';
@@ -88,6 +89,7 @@ import { BrandVoiceService } from '@gitroom/nestjs-libraries/database/prisma/bra
     PostsRepository,
     ContentToolsService,
     StripeService,
+    EvergreenService,
     PaymentService,
     PaymentProviderManager,
     RevenueCatProvider,
