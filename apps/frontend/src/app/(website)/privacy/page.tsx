@@ -48,6 +48,15 @@ export default function PrivacyPage() {
           Service, and the dates and channels you schedule them for.
         </li>
         <li>
+          <strong>Brand voice:</strong> if you use Brand voice, the short
+          style guide for your brand that you write or that our AI provider
+          (Anthropic) writes from the text of up to 60 of your recent posts
+          when you click <em>Learn from past posts</em>. When you use the ✦
+          button in the editor, your draft or idea and that guide are sent to
+          Anthropic to write the post. The guide is kept until you delete it,
+          the channel or your account.
+        </li>
+        <li>
           <strong>Team information:</strong> the email addresses of people you
           invite to your workspace and their roles.
         </li>

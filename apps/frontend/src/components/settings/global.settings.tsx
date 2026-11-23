@@ -4,6 +4,7 @@ import React from 'react';
 import { useT } from '@gitroom/react/translation/get.transation.service.client';
 import dynamic from 'next/dynamic';
 import AuthenticationComponent from '@gitroom/frontend/components/settings/authentication.component';
+import BrandVoiceComponent from '@gitroom/frontend/components/settings/brand-voice.component';
 import EmailNotificationsComponent from '@gitroom/frontend/components/settings/email-notifications.component';
 import ShortlinkPreferenceComponent from '@gitroom/frontend/components/settings/shortlink-preference.component';
 import LinkToolsComponent from '@gitroom/frontend/components/settings/link-tools.component';
@@ -24,6 +25,7 @@ export const GlobalSettings = () => {
       <AuthenticationComponent />
       <MetricComponent />
       <EmailNotificationsComponent />
+      <BrandVoiceComponent />
       <ShortlinkPreferenceComponent />
       <LinkToolsComponent />
       <DeleteAccountComponent />

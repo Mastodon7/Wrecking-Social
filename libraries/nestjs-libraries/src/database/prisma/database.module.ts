@@ -59,6 +59,7 @@ import { ErrorsRepository } from '@gitroom/nestjs-libraries/database/prisma/erro
 import { ErrorsService } from '@gitroom/nestjs-libraries/database/prisma/errors/errors.service';
 import { AdminStatsRepository } from '@gitroom/nestjs-libraries/database/prisma/admin-stats/admin-stats.repository';
 import { AdminStatsService } from '@gitroom/nestjs-libraries/database/prisma/admin-stats/admin-stats.service';
+import { BrandVoiceService } from '@gitroom/nestjs-libraries/database/prisma/brand-voice/brand-voice.service';
 
 @Global()
 @Module({
@@ -100,6 +101,7 @@ import { AdminStatsService } from '@gitroom/nestjs-libraries/database/prisma/adm
     LinkToolsService,
     MediaService,
     MediaRepository,
+    BrandVoiceService,
     AgenciesService,
     AgenciesRepository,
     IntegrationManager,

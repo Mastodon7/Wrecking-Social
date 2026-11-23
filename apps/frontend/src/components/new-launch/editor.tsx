@@ -28,6 +28,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { AddPostButton } from '@gitroom/frontend/components/new-launch/add.post.button';
 import { MultiMediaComponent } from '@gitroom/frontend/components/media/media.component';
 import { UpDownArrow } from '@gitroom/frontend/components/launches/up.down.arrow';
+import { BrandVoiceBox } from '@gitroom/frontend/components/brand.voice.box';
 import { deleteDialog } from '@gitroom/react/helpers/delete.dialog';
 import { useExistingData } from '@gitroom/frontend/components/launches/helpers/use.existing.data';
 import { useCopilotAction, useCopilotReadable } from '@copilotkit/react-core';
@@ -654,6 +655,15 @@ export const Editor: FC<{
   const [id] = useState(makeId(10));
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
   const t = useT();
+  // the channel whose brand voice the ✦ button uses: the channel being
+  // edited, the only selected channel, or "" for the default voice
+  const currentChannel = useLaunchStore((state) => state.current);
+  const voiceChannel =
+    currentChannel && currentChannel !== 'global'
+      ? currentChannel
+      : props.selectedIntegration?.length === 1
+      ? props.selectedIntegration[0].integration.id
+      : '';
   const toaster = useToaster();
   const editorRef = useRef<undefined | { editor: any }>(undefined);
   const [loading, setLoading] = useState(false);
@@ -1035,6 +1045,15 @@ export const Editor: FC<{
                     }
                     toolBar={
                       <div className="flex gap-[5px] mobile:gap-[4px]">
+                        {!props.dummy && (
+                          <BrandVoiceBox
+                            editor={editorRef?.current?.editor}
+                            value={props.value}
+                            integrationId={voiceChannel}
+                            platform={props.identifier || ''}
+                            onChange={props.onChange}
+                          />
+                        )}
                         <SignatureBox editor={editorRef?.current?.editor} />
                         <HashtagBox editor={editorRef?.current?.editor} />
                         {editorType !== 'none' && (

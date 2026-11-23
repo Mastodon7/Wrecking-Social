@@ -26,6 +26,7 @@ model Organization {
   credits             Credits[]
   clippings           Clipping[]
   customers           Customer[]
+  brandVoices         BrandVoice[]
   errors              Errors[]
   github              GitHub[]
   Integration         Integration[]
@@ -357,6 +358,21 @@ model Subscription {
 
   @@index([organizationId])
   @@index([deletedAt])
+}
+
+// How a brand writes, learned from its past posts (or written by hand).
+// integrationId "" is the default voice for every channel
+model BrandVoice {
+  id             String       @id @default(cuid())
+  organizationId String
+  integrationId  String       @default("")
+  profile        String
+  learnedFrom    Int          @default(0)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, integrationId])
 }
 
 model Customer {
