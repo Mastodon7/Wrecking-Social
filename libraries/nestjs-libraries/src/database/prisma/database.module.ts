@@ -9,6 +9,7 @@ import { SubscriptionRepository } from '@gitroom/nestjs-libraries/database/prism
 import { NotificationService } from '@gitroom/nestjs-libraries/database/prisma/notifications/notification.service';
 import { IntegrationService } from '@gitroom/nestjs-libraries/database/prisma/integrations/integration.service';
 import { IntegrationRepository } from '@gitroom/nestjs-libraries/database/prisma/integrations/integration.repository';
+import { CarouselService } from '@gitroom/nestjs-libraries/database/prisma/carousel/carousel.service';
 import { PostsService } from '@gitroom/nestjs-libraries/database/prisma/posts/posts.service';
 import { PostsRepository } from '@gitroom/nestjs-libraries/database/prisma/posts/posts.repository';
 import { IntegrationManager } from '@gitroom/nestjs-libraries/integrations/integration.manager';
@@ -83,6 +84,7 @@ import { BrandVoiceService } from '@gitroom/nestjs-libraries/database/prisma/bra
     ApprovalsService,
     IntegrationService,
     IntegrationRepository,
+    CarouselService,
     PostsService,
     PostsRepository,
     StripeService,

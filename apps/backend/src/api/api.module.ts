@@ -50,6 +50,7 @@ import {
   OAuthAuthorizedController,
 } from '@gitroom/backend/api/routes/oauth.controller';
 import { AnnouncementsController } from '@gitroom/backend/api/routes/announcements.controller';
+import { CarouselController } from '@gitroom/backend/api/routes/carousel.controller';
 import { AdminController } from '@gitroom/backend/api/routes/admin.controller';
 import { BrandVoiceController } from '@gitroom/backend/api/routes/brand-voice.controller';
 import { AuthProviderManager } from '@gitroom/backend/services/auth/providers/providers.manager';
@@ -82,6 +83,7 @@ const authenticatedController = [
   SignatureController,
   InboxToolsController,
   AutopostController,
+  CarouselController,
   SetsController,
   ThirdPartyController,
   OAuthAppController,
