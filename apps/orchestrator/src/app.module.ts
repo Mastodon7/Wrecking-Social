@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { PostActivity } from '@gitroom/orchestrator/activities/post.activity';
+import { EvergreenActivity } from '@gitroom/orchestrator/activities/evergreen.activity';
 import { getTemporalModule } from '@gitroom/nestjs-libraries/temporal/temporal.module';
 import { DatabaseModule } from '@gitroom/nestjs-libraries/database/prisma/database.module';
 import { AutopostActivity } from '@gitroom/orchestrator/activities/autopost.activity';
@@ -13,6 +14,7 @@ import { HealthController } from '@gitroom/orchestrator/health.controller';
 
 const activities = [
   PostActivity,
+  EvergreenActivity,
   AutopostActivity,
   EmailActivity,
   IntegrationsActivity,
