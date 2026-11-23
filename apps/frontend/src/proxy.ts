@@ -48,6 +48,8 @@ export async function proxy(request: NextRequest) {
   if (
     nextUrl.pathname.startsWith('/uploads/') ||
     nextUrl.pathname.startsWith('/p/') ||
+    // public link-in-bio pages
+    nextUrl.pathname.startsWith('/b/') ||
     nextUrl.pathname.startsWith('/provider/') ||
     nextUrl.pathname.startsWith('/icons/') ||
     // images of the public website (homepage photo)

@@ -34,6 +34,7 @@ model Organization {
   github              GitHub[]
   Integration         Integration[]
   media               Media[]
+  bioPages            BioPage[]
   buyerOrganization   MessagesGroup[]
   notifications       Notifications[]
   plugs               Plugs[]
@@ -248,6 +249,37 @@ model Star {
   updatedAt  DateTime @updatedAt
 
   @@unique([login, date])
+}
+
+// Link-in-bio page, public at /b/<slug>. links: [{ id, label, url }]
+model BioPage {
+  id             String       @id @default(cuid())
+  organizationId String
+  slug           String       @unique
+  title          String
+  bio            String       @default("")
+  avatarUrl      String?
+  accent         String       @default("#086b31")
+  links          Json         @default("[]")
+  published      Boolean      @default(true)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  stats          BioStat[]
+
+  @@index([organizationId])
+}
+
+// Daily page views (linkId "_view") and clicks per link; no visitor data
+model BioStat {
+  id     String   @id @default(cuid())
+  pageId String
+  linkId String
+  day    DateTime @db.Date
+  count  Int      @default(0)
+  page   BioPage  @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@unique([pageId, linkId, day])
 }
 
 model Media {
