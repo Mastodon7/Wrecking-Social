@@ -6,6 +6,7 @@ import { UsersService } from '@gitroom/nestjs-libraries/database/prisma/users/us
 import { UsersRepository } from '@gitroom/nestjs-libraries/database/prisma/users/users.repository';
 import { SubscriptionService } from '@gitroom/nestjs-libraries/database/prisma/subscriptions/subscription.service';
 import { SubscriptionRepository } from '@gitroom/nestjs-libraries/database/prisma/subscriptions/subscription.repository';
+import { BioService } from '@gitroom/nestjs-libraries/database/prisma/bio/bio.service';
 import { NotificationService } from '@gitroom/nestjs-libraries/database/prisma/notifications/notification.service';
 import { IntegrationService } from '@gitroom/nestjs-libraries/database/prisma/integrations/integration.service';
 import { IntegrationRepository } from '@gitroom/nestjs-libraries/database/prisma/integrations/integration.repository';
@@ -77,6 +78,7 @@ import { BrandVoiceService } from '@gitroom/nestjs-libraries/database/prisma/bra
     SubscriptionService,
     SubscriptionRepository,
     NotificationService,
+    BioService,
     NotificationsRepository,
     WebhooksRepository,
     WebhooksService,

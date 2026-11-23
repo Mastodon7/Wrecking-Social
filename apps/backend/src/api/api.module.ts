@@ -31,6 +31,10 @@ import { ExtractContentService } from '@gitroom/nestjs-libraries/openai/extract.
 import { CodesService } from '@gitroom/nestjs-libraries/services/codes.service';
 import { CopilotController } from '@gitroom/backend/api/routes/copilot.controller';
 import { PublicController } from '@gitroom/backend/api/routes/public.controller';
+import {
+  BioController,
+  PublicBioController,
+} from '@gitroom/backend/api/routes/bio.controller';
 import { RootController } from '@gitroom/backend/api/routes/root.controller';
 import { TrackService } from '@gitroom/nestjs-libraries/track/track.service';
 import { ShortLinkService } from '@gitroom/nestjs-libraries/short-linking/short.link.service';
@@ -85,6 +89,7 @@ const authenticatedController = [
   SetsController,
   ThirdPartyController,
   OAuthAppController,
+  BioController,
   ApprovedAppsController,
   OAuthAuthorizedController,
   AnnouncementsController,
@@ -106,6 +111,7 @@ const authenticatedController = [
         PlatformCallbacksController,
         AuthController,
         PublicController,
+        PublicBioController,
         MonitorController,
         EnterpriseController,
         NoAuthIntegrationsController,
