@@ -69,6 +69,8 @@ services:
       # Social platform apps, filled in as each one is approved
       FACEBOOK_APP_ID: ${FACEBOOK_APP_ID:-}
       FACEBOOK_APP_SECRET: ${FACEBOOK_APP_SECRET:-}
+      FACEBOOK_LOGIN_CONFIG_ID: ${FACEBOOK_LOGIN_CONFIG_ID:-}
+      FACEBOOK_LOGIN_OMIT_SCOPE: ${FACEBOOK_LOGIN_OMIT_SCOPE:-}
       # Instagram API with Instagram Login (a separate Meta app; optional)
       INSTAGRAM_APP_ID: ${INSTAGRAM_APP_ID:-}
       INSTAGRAM_APP_SECRET: ${INSTAGRAM_APP_SECRET:-}
