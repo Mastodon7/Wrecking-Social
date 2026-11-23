@@ -52,6 +52,8 @@ export async function proxy(request: NextRequest) {
     nextUrl.pathname.startsWith('/b/') ||
     nextUrl.pathname.startsWith('/provider/') ||
     nextUrl.pathname.startsWith('/icons/') ||
+    // shared monthly reports (unguessable link)
+    nextUrl.pathname.startsWith('/r/') ||
     // images of the public website (homepage photo)
     nextUrl.pathname.startsWith('/website/') ||
     // the consent screen of MCP / OAuth clients handles signed-out visitors

@@ -49,6 +49,10 @@ import { MonitorController } from '@gitroom/backend/api/routes/monitor.controlle
 import { ContentToolsController } from '@gitroom/backend/api/routes/content-tools.controller';
 import { NoAuthIntegrationsController } from '@gitroom/backend/api/routes/no.auth.integrations.controller';
 import { EnterpriseController } from '@gitroom/backend/api/routes/enterprise.controller';
+import {
+  PublicReportsController,
+  ReportsController,
+} from '@gitroom/backend/api/routes/reports.controller';
 import { OAuthAppController } from '@gitroom/backend/api/routes/oauth-app.controller';
 import { ApprovedAppsController } from '@gitroom/backend/api/routes/approved-apps.controller';
 import {
@@ -95,6 +99,7 @@ const authenticatedController = [
   OAuthAppController,
   BioController,
   ApprovedAppsController,
+  ReportsController,
   OAuthAuthorizedController,
   AnnouncementsController,
   AdminController,
@@ -118,6 +123,7 @@ const authenticatedController = [
         PublicBioController,
         MonitorController,
         EnterpriseController,
+        PublicReportsController,
         NoAuthIntegrationsController,
         OAuthController,
         MediaWidgetController,

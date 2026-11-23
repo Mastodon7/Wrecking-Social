@@ -48,6 +48,8 @@ model Organization {
   subscription        Subscription?
   tags                Tags[]
   thirdParty          ThirdParty[]
+  reportSetting       ReportSetting?
+  reports             Report[]
   usedCodes           UsedCodes[]
   users               UserOrganization[]
   webhooks            Webhooks[]
@@ -691,6 +693,35 @@ model Post {
   @@index([lastMessageId])
   @@index([createdAt])
   @@index([integrationId])
+}
+
+// Branding and delivery of the monthly report
+model ReportSetting {
+  organizationId String       @id
+  brandName      String       @default("")
+  logoUrl        String?
+  accent         String       @default("#086b31")
+  timezone       String       @default("UTC")
+  // comma separated email addresses for the monthly email
+  recipients     String       @default("")
+  monthlyEmail   Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+}
+
+// A generated report: a snapshot of the numbers, shared by its token
+model Report {
+  id             String       @id @default(cuid())
+  organizationId String
+  token          String       @unique
+  month          String
+  auto           Boolean      @default(false)
+  data           Json
+  createdAt      DateTime     @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, month])
 }
 
 model Notifications {
