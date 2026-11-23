@@ -27,6 +27,20 @@ export class InsightsController {
     };
   }
 
+  @Get('/best-time')
+  async bestTime(
+    @GetOrgFromRequest() org: Organization,
+    @Query('integrations') integrations: string,
+    @Query('tz') tz: string
+  ) {
+    const ids = (integrations || '')
+      .split(',')
+      .map((id) => id.trim())
+      .filter(Boolean)
+      .slice(0, 50);
+    return this._insightsService.bestTime(org.id, ids, tz);
+  }
+
   @Get('/ai')
   async getAiSummary(
     @GetOrgFromRequest() org: Organization,
